@@ -1,0 +1,15 @@
+User-agent: *
+Allow: /
+
+User-agent: Googlebot
+Allow: /
+
+User-agent: Googlebot-Image
+Allow: /
+
+User-agent: Storebot-Google
+Allow: /
+
+Sitemap: https://faminasrestaurant.com/sitemap.xml
+# Google Merchant Center Scheduled Fetch Feed
+# https://faminasrestaurant.com/google-merchant-feed.xml

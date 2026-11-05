@@ -1,0 +1,6 @@
+{
+  "name": "Faminas African and Americans Restaurant",
+  "description": "Authentic Sierra Leonean, West African, and classic American cuisine in Lindenwold, NJ. Online ordering, high-resolution menu photography, catering, and restaurant management.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
