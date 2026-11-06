@@ -84,21 +84,27 @@ const DEFAULT_OFFERS: OfferBanner[] = [
 
 interface PromotionalOfferBannersProps {
   onNavigate: (page: 'ordering' | 'menu' | 'catering') => void;
+  customOffers?: OfferBanner[];
 }
 
-export const PromotionalOfferBanners: React.FC<PromotionalOfferBannersProps> = ({ onNavigate }) => {
+export const PromotionalOfferBanners: React.FC<PromotionalOfferBannersProps> = ({
+  onNavigate,
+  customOffers,
+}) => {
   const [activeIndex, setActiveIndex] = useState(0);
   const [copiedCode, setCopiedCode] = useState<string | null>(null);
   const [isPaused, setIsPaused] = useState(false);
+
+  const activeOffers = customOffers && customOffers.length > 0 ? customOffers : DEFAULT_OFFERS;
 
   // Auto-advance banner every 6 seconds unless paused by mouse hover
   useEffect(() => {
     if (isPaused) return;
     const interval = setInterval(() => {
-      setActiveIndex((prev) => (prev + 1) % DEFAULT_OFFERS.length);
+      setActiveIndex((prev) => (prev + 1) % activeOffers.length);
     }, 6000);
     return () => clearInterval(interval);
-  }, [isPaused]);
+  }, [isPaused, activeOffers.length]);
 
   const handleCopyCode = (code: string, e: React.MouseEvent) => {
     e.stopPropagation();
@@ -109,7 +115,7 @@ export const PromotionalOfferBanners: React.FC<PromotionalOfferBannersProps> = (
     }, 2500);
   };
 
-  const currentOffer = DEFAULT_OFFERS[activeIndex];
+  const currentOffer = activeOffers[activeIndex] || activeOffers[0];
 
   return (
     <section
@@ -140,7 +146,7 @@ export const PromotionalOfferBanners: React.FC<PromotionalOfferBannersProps> = (
         {/* Carousel Slide Indicators & Controls */}
         <div className="flex items-center gap-2 self-end sm:self-center">
           <div className="flex items-center gap-1.5 mr-2">
-            {DEFAULT_OFFERS.map((offer, idx) => (
+            {activeOffers.map((offer, idx) => (
               <button
                 key={offer.id}
                 type="button"
@@ -158,7 +164,7 @@ export const PromotionalOfferBanners: React.FC<PromotionalOfferBannersProps> = (
           <button
             type="button"
             onClick={() =>
-              setActiveIndex((prev) => (prev === 0 ? DEFAULT_OFFERS.length - 1 : prev - 1))
+              setActiveIndex((prev) => (prev === 0 ? activeOffers.length - 1 : prev - 1))
             }
             aria-label="Previous promotional offer"
             className="w-8 h-8 rounded-full bg-white/80 hover:bg-white border border-[#C9A45C]/40 flex items-center justify-center text-[#21150F] shadow-sm hover:scale-105 transition-all cursor-pointer"
@@ -167,7 +173,7 @@ export const PromotionalOfferBanners: React.FC<PromotionalOfferBannersProps> = (
           </button>
           <button
             type="button"
-            onClick={() => setActiveIndex((prev) => (prev + 1) % DEFAULT_OFFERS.length)}
+            onClick={() => setActiveIndex((prev) => (prev + 1) % activeOffers.length)}
             aria-label="Next promotional offer"
             className="w-8 h-8 rounded-full bg-white/80 hover:bg-white border border-[#C9A45C]/40 flex items-center justify-center text-[#21150F] shadow-sm hover:scale-105 transition-all cursor-pointer"
           >
@@ -262,7 +268,7 @@ export const PromotionalOfferBanners: React.FC<PromotionalOfferBannersProps> = (
 
       {/* Mini Quick-Offer Cards Row */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3.5 mt-4">
-        {DEFAULT_OFFERS.map((offer, idx) => {
+        {activeOffers.map((offer, idx) => {
           const isSelected = activeIndex === idx;
           return (
             <button

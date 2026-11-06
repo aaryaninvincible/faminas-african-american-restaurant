@@ -405,6 +405,20 @@ export interface WebsiteCateringContent {
   packages: WebsiteCateringPackage[];
 }
 
+export interface WebsiteOfferBanner {
+  id: string;
+  badge: string;
+  title: string;
+  subtitle: string;
+  promoCode?: string;
+  discountHighlight: string;
+  image: string;
+  actionText: string;
+  targetPage: 'ordering' | 'menu' | 'catering';
+  accentColor: string;
+  secondaryText?: string;
+}
+
 export interface WebsiteSpecialOffersContent {
   active: boolean;
   bannerTitle: string;
@@ -414,6 +428,7 @@ export interface WebsiteSpecialOffersContent {
   expiryDate: string;
   ctaText: string;
   imageUrl: string;
+  offersList: WebsiteOfferBanner[];
 }
 
 export interface WebsiteReviewItem {
@@ -459,9 +474,82 @@ export interface WebsiteFooterContent {
   youtubeUrl: string;
 }
 
+export interface WebsiteBrandingContent {
+  restaurantName: string;
+  restaurantShortName: string;
+  tagline: string;
+  slogan: string;
+  currencySymbol: string;
+  taxRatePercentage: number;
+  defaultDeliveryFee: number;
+  minimumOrderAmount: number;
+  primaryColor?: string;
+  secondaryColor?: string;
+}
+
+export interface WebsiteSectionVisibility {
+  announcementBar: boolean;
+  heroSlider: boolean;
+  welcomeSection: boolean;
+  promotionalBanners: boolean;
+  dailySpecials: boolean;
+  kitchenVideos: boolean;
+  whyChooseUs: boolean;
+  printMenuSheet: boolean;
+  customerReviews: boolean;
+  vipNewsletter: boolean;
+  mapAndLocation: boolean;
+}
+
+export interface WebsiteWhyChooseUsCard {
+  id: string;
+  number: string;
+  title: string;
+  description: string;
+}
+
+export interface WebsiteWhyChooseUsContent {
+  badge: string;
+  title: string;
+  description: string;
+  cards: WebsiteWhyChooseUsCard[];
+}
+
+export interface WebsiteVipNewsletterContent {
+  badge: string;
+  title: string;
+  description: string;
+  buttonText: string;
+  disclaimer: string;
+}
+
+export interface WebsiteLegalContent {
+  privacyPolicyTitle: string;
+  privacyPolicyContent: string;
+  privacyLastUpdated: string;
+  termsTitle: string;
+  termsContent: string;
+  termsLastUpdated: string;
+}
+
+export interface WebsiteNavLink {
+  id: PageRoute;
+  label: string;
+  isVisible: boolean;
+}
+
+export interface WebsiteNavigationContent {
+  navLinks: WebsiteNavLink[];
+}
+
 export interface WebsiteContent {
   header: WebsiteHeaderContent;
+  branding: WebsiteBrandingContent;
+  sectionVisibility: WebsiteSectionVisibility;
+  navigation: WebsiteNavigationContent;
   home: WebsiteHomeContent;
+  whyChooseUs: WebsiteWhyChooseUsContent;
+  vipNewsletter: WebsiteVipNewsletterContent;
   about: WebsiteAboutContent;
   videos: WebsiteVideosContent;
   catering: WebsiteCateringContent;
@@ -469,17 +557,24 @@ export interface WebsiteContent {
   reviews: WebsiteReviewsContent;
   contact: WebsiteContactContent;
   footer: WebsiteFooterContent;
+  legal: WebsiteLegalContent;
   lastPublishedAt?: string;
   publishedBy?: string;
 }
 
 export type SectionKey =
   | 'header'
+  | 'branding'
+  | 'sectionVisibility'
+  | 'navigation'
   | 'home'
+  | 'whyChooseUs'
+  | 'vipNewsletter'
   | 'about'
   | 'videos'
   | 'catering'
   | 'specialOffers'
   | 'reviews'
   | 'contact'
-  | 'footer';
+  | 'footer'
+  | 'legal';

@@ -25,6 +25,12 @@ import {
   MapPin,
   Mail,
   Share2,
+  SlidersHorizontal,
+  ShieldCheck,
+  FileText,
+  Menu as MenuIcon,
+  Palette,
+  CheckCircle,
 } from 'lucide-react';
 import { useRestaurant } from '../context/RestaurantContext';
 import {
@@ -33,18 +39,26 @@ import {
   WebsiteCateringPackage,
   WebsiteReviewItem,
   HeroSlideConfig,
+  WebsiteWhyChooseUsCard,
+  WebsiteNavLink,
 } from '../types/restaurant';
 
 type CmsTab =
+  | 'branding'
+  | 'sectionVisibility'
+  | 'navigation'
   | 'header'
   | 'home'
+  | 'whyChooseUs'
+  | 'vipNewsletter'
   | 'about'
   | 'videos'
   | 'catering'
   | 'specialOffers'
   | 'reviews'
   | 'contact'
-  | 'footer';
+  | 'footer'
+  | 'legal';
 
 export const WebsiteContentEditor: React.FC<{ onPreviewWebsite?: () => void }> = ({
   onPreviewWebsite,
@@ -195,15 +209,21 @@ export const WebsiteContentEditor: React.FC<{ onPreviewWebsite?: () => void }> =
           ========================================================================= */}
       <div className="flex items-center gap-2 overflow-x-auto pb-2 scrollbar-thin">
         {[
+          { id: 'branding', label: 'Branding & Store', icon: Palette },
+          { id: 'sectionVisibility', label: 'Section Visibility', icon: SlidersHorizontal },
+          { id: 'navigation', label: 'Navigation Bar', icon: MenuIcon },
           { id: 'header', label: 'Header & Top Bar', icon: Globe },
           { id: 'home', label: 'Home Page & Slider', icon: Home },
+          { id: 'whyChooseUs', label: 'Why Choose Us', icon: Sparkles },
+          { id: 'vipNewsletter', label: 'VIP Club & News', icon: Mail },
           { id: 'about', label: 'About Us & Bio', icon: Info },
           { id: 'videos', label: 'Kitchen Videos & Reels', icon: Video },
           { id: 'catering', label: 'Catering Packages', icon: Calendar },
-          { id: 'specialOffers', label: 'Special Offers', icon: Sparkles },
+          { id: 'specialOffers', label: 'Special Offers', icon: Utensils },
           { id: 'reviews', label: 'Customer Reviews', icon: Star },
           { id: 'contact', label: 'Contact Us & Hours', icon: Phone },
           { id: 'footer', label: 'Footer & Socials', icon: Share2 },
+          { id: 'legal', label: 'Legal Policies', icon: ShieldCheck },
         ].map((tab) => {
           const Icon = tab.icon;
           const isActive = activeCmsTab === tab.id;
@@ -223,6 +243,239 @@ export const WebsiteContentEditor: React.FC<{ onPreviewWebsite?: () => void }> =
           );
         })}
       </div>
+
+      {/* =========================================================================
+          TAB: BRANDING & STORE SETTINGS
+          ========================================================================= */}
+      {activeCmsTab === 'branding' && (
+        <div className="p-6 rounded-2xl bg-[#1C140E] border border-white/10 space-y-6">
+          <div className="border-b border-white/10 pb-4">
+            <h3 className="text-base font-bold text-[#FFFFFF]">Branding, Identity &amp; Global Store Settings</h3>
+            <p className="text-xs text-[#F7F2EB]/60">Manage restaurant brand name, taglines, currency, tax rate, and delivery settings live across the whole site.</p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+            <div className="space-y-2">
+              <label className="block text-xs font-bold text-[#F7F2EB]">Full Restaurant Name</label>
+              <input
+                type="text"
+                value={draftWebsiteContent.branding?.restaurantName || ''}
+                onChange={(e) => updateDraftField('branding', 'restaurantName', e.target.value)}
+                className="w-full px-4 py-2.5 rounded-xl bg-black/40 border border-white/15 text-xs text-[#F7F2EB] focus:outline-none focus:border-[#D4AF37]"
+                placeholder="FAMINAS African and American Restaurant"
+              />
+            </div>
+
+            <div className="space-y-2">
+              <label className="block text-xs font-bold text-[#F7F2EB]">Short Brand Name</label>
+              <input
+                type="text"
+                value={draftWebsiteContent.branding?.restaurantShortName || ''}
+                onChange={(e) => updateDraftField('branding', 'restaurantShortName', e.target.value)}
+                className="w-full px-4 py-2.5 rounded-xl bg-black/40 border border-white/15 text-xs text-[#F7F2EB] focus:outline-none focus:border-[#D4AF37]"
+                placeholder="FAMINAS"
+              />
+            </div>
+
+            <div className="space-y-2">
+              <label className="block text-xs font-bold text-[#F7F2EB]">Brand Slogan</label>
+              <input
+                type="text"
+                value={draftWebsiteContent.branding?.slogan || ''}
+                onChange={(e) => updateDraftField('branding', 'slogan', e.target.value)}
+                className="w-full px-4 py-2.5 rounded-xl bg-black/40 border border-white/15 text-xs text-[#F7F2EB] focus:outline-none focus:border-[#D4AF37]"
+                placeholder="Good Food Brings People Together."
+              />
+            </div>
+
+            <div className="space-y-2">
+              <label className="block text-xs font-bold text-[#F7F2EB]">Brand Tagline / Subtitle</label>
+              <input
+                type="text"
+                value={draftWebsiteContent.branding?.tagline || ''}
+                onChange={(e) => updateDraftField('branding', 'tagline', e.target.value)}
+                className="w-full px-4 py-2.5 rounded-xl bg-black/40 border border-white/15 text-xs text-[#F7F2EB] focus:outline-none focus:border-[#D4AF37]"
+                placeholder="Authentic Flavors. Fresh Ingredients. A Taste of Home."
+              />
+            </div>
+
+            <div className="space-y-2">
+              <label className="block text-xs font-bold text-[#F7F2EB]">Currency Symbol</label>
+              <input
+                type="text"
+                value={draftWebsiteContent.branding?.currencySymbol || '$'}
+                onChange={(e) => updateDraftField('branding', 'currencySymbol', e.target.value)}
+                className="w-full px-4 py-2.5 rounded-xl bg-black/40 border border-white/15 text-xs text-[#F7F2EB] focus:outline-none focus:border-[#D4AF37]"
+                placeholder="$"
+              />
+            </div>
+
+            <div className="space-y-2">
+              <label className="block text-xs font-bold text-[#F7F2EB]">NJ Sales Tax Rate (%)</label>
+              <input
+                type="number"
+                step="0.001"
+                value={draftWebsiteContent.branding?.taxRatePercentage ?? 6.625}
+                onChange={(e) => updateDraftField('branding', 'taxRatePercentage', parseFloat(e.target.value) || 0)}
+                className="w-full px-4 py-2.5 rounded-xl bg-black/40 border border-white/15 text-xs text-[#F7F2EB] focus:outline-none focus:border-[#D4AF37]"
+                placeholder="6.625"
+              />
+            </div>
+
+            <div className="space-y-2">
+              <label className="block text-xs font-bold text-[#F7F2EB]">Default Delivery Fee ($)</label>
+              <input
+                type="number"
+                step="0.01"
+                value={draftWebsiteContent.branding?.defaultDeliveryFee ?? 4.99}
+                onChange={(e) => updateDraftField('branding', 'defaultDeliveryFee', parseFloat(e.target.value) || 0)}
+                className="w-full px-4 py-2.5 rounded-xl bg-black/40 border border-white/15 text-xs text-[#F7F2EB] focus:outline-none focus:border-[#D4AF37]"
+                placeholder="4.99"
+              />
+            </div>
+
+            <div className="space-y-2">
+              <label className="block text-xs font-bold text-[#F7F2EB]">Minimum Order Amount ($)</label>
+              <input
+                type="number"
+                step="0.01"
+                value={draftWebsiteContent.branding?.minimumOrderAmount ?? 15.0}
+                onChange={(e) => updateDraftField('branding', 'minimumOrderAmount', parseFloat(e.target.value) || 0)}
+                className="w-full px-4 py-2.5 rounded-xl bg-black/40 border border-white/15 text-xs text-[#F7F2EB] focus:outline-none focus:border-[#D4AF37]"
+                placeholder="15.00"
+              />
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* =========================================================================
+          TAB: SECTION VISIBILITY TOGGLES
+          ========================================================================= */}
+      {activeCmsTab === 'sectionVisibility' && (
+        <div className="p-6 rounded-2xl bg-[#1C140E] border border-white/10 space-y-6">
+          <div className="border-b border-white/10 pb-4">
+            <h3 className="text-base font-bold text-[#FFFFFF]">Homepage Section Visibility Toggles</h3>
+            <p className="text-xs text-[#F7F2EB]/60">Enable or disable any section on the homepage with a single click. Changes take effect on the live site when published.</p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            {[
+              { key: 'announcementBar', title: 'Top Announcement Bar', desc: 'Top golden alert bar with phone and specials' },
+              { key: 'heroSlider', title: 'Food Photography Hero Slider', desc: '5-slide luxury food carousel and action buttons' },
+              { key: 'welcomeSection', title: 'Welcome & Restaurant Intro', desc: 'Introductory card and Lindenwold address welcome' },
+              { key: 'promotionalBanners', title: 'Promotional Offer Banners', desc: 'Family feast, lunch combo, & weekend catering cards' },
+              { key: 'dailySpecials', title: 'Chef Daily Specials Grid', desc: 'Today featured dishes and signature culinary highlights' },
+              { key: 'kitchenVideos', title: 'Live Kitchen Videos & Reels', desc: 'Video shorts showcase with direct ordering integration' },
+              { key: 'whyChooseUs', title: 'Why Choose FAMINAS Band', desc: '4 highlights: authentic recipes, dual cuisine, WhatsApp' },
+              { key: 'printMenuSheet', title: 'Print-Ready Menu Sheet', desc: 'Official two-page laminated menu and download CTA' },
+              { key: 'customerReviews', title: 'Verified Customer Reviews', desc: 'Guest feedback, ratings, and submission form' },
+              { key: 'vipNewsletter', title: 'VIP Guest Club Newsletter', desc: 'Email/SMS signup for specials & promotions' },
+              { key: 'mapAndLocation', title: 'Location & Google Discovery', desc: 'Lindenwold address, phone, and SEO search tags' },
+            ].map((sec) => {
+              const isVisible = draftWebsiteContent.sectionVisibility?.[sec.key as keyof typeof draftWebsiteContent.sectionVisibility] !== false;
+              return (
+                <div
+                  key={sec.key}
+                  className={`p-4 rounded-xl border transition-all ${
+                    isVisible
+                      ? 'bg-emerald-950/20 border-emerald-500/40'
+                      : 'bg-black/30 border-white/10 opacity-70'
+                  }`}
+                >
+                  <div className="flex items-start justify-between gap-3">
+                    <div className="space-y-1">
+                      <div className="flex items-center gap-2">
+                        <span className={`w-2 h-2 rounded-full ${isVisible ? 'bg-emerald-400' : 'bg-zinc-600'}`} />
+                        <h4 className="text-xs font-bold text-[#FFFFFF]">{sec.title}</h4>
+                      </div>
+                      <p className="text-[11px] text-[#F7F2EB]/60 leading-snug">{sec.desc}</p>
+                    </div>
+
+                    <button
+                      type="button"
+                      onClick={() =>
+                        updateDraftField(
+                          'sectionVisibility',
+                          sec.key as any,
+                          !isVisible as any
+                        )
+                      }
+                      className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer ${
+                        isVisible
+                          ? 'bg-emerald-500 text-black hover:bg-emerald-400'
+                          : 'bg-white/10 text-white/70 hover:bg-white/20'
+                      }`}
+                    >
+                      {isVisible ? 'Visible' : 'Hidden'}
+                    </button>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      )}
+
+      {/* =========================================================================
+          TAB: NAVIGATION BAR LINKS EDITOR
+          ========================================================================= */}
+      {activeCmsTab === 'navigation' && (
+        <div className="p-6 rounded-2xl bg-[#1C140E] border border-white/10 space-y-6">
+          <div className="border-b border-white/10 pb-4">
+            <h3 className="text-base font-bold text-[#FFFFFF]">Navigation Bar &amp; Mobile Menu Links</h3>
+            <p className="text-xs text-[#F7F2EB]/60">Customize navigation labels and control which pages appear in the top menu and mobile drawer.</p>
+          </div>
+
+          <div className="space-y-3">
+            {(draftWebsiteContent.navigation?.navLinks || []).map((link, idx) => (
+              <div
+                key={link.id}
+                className="p-3.5 rounded-xl bg-black/30 border border-white/10 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3"
+              >
+                <div className="flex items-center gap-3">
+                  <span className="font-mono text-xs font-bold text-[#D4AF37] px-2 py-1 rounded bg-[#D4AF37]/10">
+                    #{idx + 1}
+                  </span>
+                  <div>
+                    <span className="text-[11px] font-mono text-white/40 uppercase">Route: /{link.id}</span>
+                  </div>
+                </div>
+
+                <div className="flex items-center gap-3 w-full sm:w-auto">
+                  <input
+                    type="text"
+                    value={link.label}
+                    onChange={(e) => {
+                      const updated = [...(draftWebsiteContent.navigation?.navLinks || [])];
+                      updated[idx] = { ...updated[idx], label: e.target.value };
+                      updateDraftSection('navigation', { navLinks: updated });
+                    }}
+                    placeholder="Link Label"
+                    className="px-3 py-1.5 rounded-lg bg-black/50 border border-white/15 text-xs text-[#F7F2EB] flex-1 sm:w-48 focus:outline-none focus:border-[#D4AF37]"
+                  />
+
+                  <button
+                    type="button"
+                    onClick={() => {
+                      const updated = [...(draftWebsiteContent.navigation?.navLinks || [])];
+                      updated[idx] = { ...updated[idx], isVisible: !updated[idx].isVisible };
+                      updateDraftSection('navigation', { navLinks: updated });
+                    }}
+                    className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer ${
+                      link.isVisible
+                        ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/40'
+                        : 'bg-zinc-800 text-zinc-400 border border-zinc-700'
+                    }`}
+                  >
+                    {link.isVisible ? 'Visible' : 'Hidden'}
+                  </button>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
 
       {/* =========================================================================
           TAB 1: HEADER & TOP BAR
@@ -542,6 +795,164 @@ export const WebsiteContentEditor: React.FC<{ onPreviewWebsite?: () => void }> =
                   </div>
                 </div>
               ))}
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* =========================================================================
+          TAB: WHY CHOOSE US
+          ========================================================================= */}
+      {activeCmsTab === 'whyChooseUs' && (
+        <div className="p-6 rounded-2xl bg-[#1C140E] border border-white/10 space-y-6">
+          <div className="border-b border-white/10 pb-4">
+            <h3 className="text-base font-bold text-[#FFFFFF]">Why Choose FAMINAS Feature Band</h3>
+            <p className="text-xs text-[#F7F2EB]/60">Customize the headline, location description, and the 4 highlight hospitality cards on the homepage.</p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+            <div className="space-y-2">
+              <label className="block text-xs font-bold text-[#F7F2EB]">Section Badge</label>
+              <input
+                type="text"
+                value={draftWebsiteContent.whyChooseUs?.badge || ''}
+                onChange={(e) => updateDraftField('whyChooseUs', 'badge', e.target.value)}
+                className="w-full px-4 py-2.5 rounded-xl bg-black/40 border border-white/15 text-xs text-[#F7F2EB] focus:outline-none focus:border-[#D4AF37]"
+                placeholder="Five-Star Hospitality in South Jersey"
+              />
+            </div>
+
+            <div className="space-y-2">
+              <label className="block text-xs font-bold text-[#F7F2EB]">Section Title</label>
+              <input
+                type="text"
+                value={draftWebsiteContent.whyChooseUs?.title || ''}
+                onChange={(e) => updateDraftField('whyChooseUs', 'title', e.target.value)}
+                className="w-full px-4 py-2.5 rounded-xl bg-black/40 border border-white/15 text-xs text-[#F7F2EB] focus:outline-none focus:border-[#D4AF37]"
+                placeholder="Why Guests Love Dining at FAMINAS"
+              />
+            </div>
+
+            <div className="space-y-2 md:col-span-2">
+              <label className="block text-xs font-bold text-[#F7F2EB]">Section Description</label>
+              <textarea
+                rows={3}
+                value={draftWebsiteContent.whyChooseUs?.description || ''}
+                onChange={(e) => updateDraftField('whyChooseUs', 'description', e.target.value)}
+                className="w-full px-4 py-2.5 rounded-xl bg-black/40 border border-white/15 text-xs text-[#F7F2EB] focus:outline-none focus:border-[#D4AF37]"
+              />
+            </div>
+          </div>
+
+          <div className="space-y-4 pt-4 border-t border-white/10">
+            <h4 className="text-sm font-bold text-[#FFFFFF]">4 Feature Highlight Cards</h4>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {(draftWebsiteContent.whyChooseUs?.cards || []).map((card, idx) => (
+                <div key={card.id || idx} className="p-4 rounded-xl bg-black/30 border border-white/10 space-y-3">
+                  <div className="flex items-center gap-3">
+                    <input
+                      type="text"
+                      value={card.number}
+                      onChange={(e) => {
+                        const updated = [...(draftWebsiteContent.whyChooseUs?.cards || [])];
+                        updated[idx] = { ...updated[idx], number: e.target.value };
+                        updateDraftSection('whyChooseUs', { cards: updated });
+                      }}
+                      className="w-16 px-2.5 py-1.5 rounded-lg bg-black/60 border border-white/15 text-xs font-mono font-bold text-[#D4AF37] text-center"
+                      placeholder="01"
+                    />
+                    <input
+                      type="text"
+                      value={card.title}
+                      onChange={(e) => {
+                        const updated = [...(draftWebsiteContent.whyChooseUs?.cards || [])];
+                        updated[idx] = { ...updated[idx], title: e.target.value };
+                        updateDraftSection('whyChooseUs', { cards: updated });
+                      }}
+                      className="flex-1 px-3 py-1.5 rounded-lg bg-black/50 border border-white/15 text-xs font-bold text-[#FFFFFF] focus:outline-none focus:border-[#D4AF37]"
+                      placeholder="Card Title"
+                    />
+                  </div>
+                  <textarea
+                    rows={3}
+                    value={card.description}
+                    onChange={(e) => {
+                      const updated = [...(draftWebsiteContent.whyChooseUs?.cards || [])];
+                      updated[idx] = { ...updated[idx], description: e.target.value };
+                      updateDraftSection('whyChooseUs', { cards: updated });
+                    }}
+                    className="w-full px-3 py-2 rounded-lg bg-black/40 border border-white/15 text-xs text-[#F7F2EB] focus:outline-none focus:border-[#D4AF37]"
+                    placeholder="Card description..."
+                  />
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* =========================================================================
+          TAB: VIP NEWSLETTER & CLUB
+          ========================================================================= */}
+      {activeCmsTab === 'vipNewsletter' && (
+        <div className="p-6 rounded-2xl bg-[#1C140E] border border-white/10 space-y-6">
+          <div className="border-b border-white/10 pb-4">
+            <h3 className="text-base font-bold text-[#FFFFFF]">VIP Guest Club &amp; Newsletter Settings</h3>
+            <p className="text-xs text-[#F7F2EB]/60">Customize the signup card, title, offer copy, CTA button text, and SMS/Email consent notice.</p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+            <div className="space-y-2">
+              <label className="block text-xs font-bold text-[#F7F2EB]">Badge Text</label>
+              <input
+                type="text"
+                value={draftWebsiteContent.vipNewsletter?.badge || ''}
+                onChange={(e) => updateDraftField('vipNewsletter', 'badge', e.target.value)}
+                className="w-full px-4 py-2.5 rounded-xl bg-black/40 border border-white/15 text-xs text-[#F7F2EB] focus:outline-none focus:border-[#D4AF37]"
+                placeholder="VIP Guest Club · Daily Specials & Seasonal Offers"
+              />
+            </div>
+
+            <div className="space-y-2">
+              <label className="block text-xs font-bold text-[#F7F2EB]">Button CTA Text</label>
+              <input
+                type="text"
+                value={draftWebsiteContent.vipNewsletter?.buttonText || ''}
+                onChange={(e) => updateDraftField('vipNewsletter', 'buttonText', e.target.value)}
+                className="w-full px-4 py-2.5 rounded-xl bg-black/40 border border-white/15 text-xs text-[#F7F2EB] focus:outline-none focus:border-[#D4AF37]"
+                placeholder="Subscribe for Special Offers"
+              />
+            </div>
+
+            <div className="space-y-2 md:col-span-2">
+              <label className="block text-xs font-bold text-[#F7F2EB]">Main Headline</label>
+              <input
+                type="text"
+                value={draftWebsiteContent.vipNewsletter?.title || ''}
+                onChange={(e) => updateDraftField('vipNewsletter', 'title', e.target.value)}
+                className="w-full px-4 py-2.5 rounded-xl bg-black/40 border border-white/15 text-xs text-[#F7F2EB] focus:outline-none focus:border-[#D4AF37]"
+                placeholder="Receive Chef's Daily Specials & Catering Promotions"
+              />
+            </div>
+
+            <div className="space-y-2 md:col-span-2">
+              <label className="block text-xs font-bold text-[#F7F2EB]">Description / Incentive Copy</label>
+              <textarea
+                rows={3}
+                value={draftWebsiteContent.vipNewsletter?.description || ''}
+                onChange={(e) => updateDraftField('vipNewsletter', 'description', e.target.value)}
+                className="w-full px-4 py-2.5 rounded-xl bg-black/40 border border-white/15 text-xs text-[#F7F2EB] focus:outline-none focus:border-[#D4AF37]"
+              />
+            </div>
+
+            <div className="space-y-2 md:col-span-2">
+              <label className="block text-xs font-bold text-[#F7F2EB]">Consent &amp; Privacy Disclaimer</label>
+              <textarea
+                rows={2}
+                value={draftWebsiteContent.vipNewsletter?.disclaimer || ''}
+                onChange={(e) => updateDraftField('vipNewsletter', 'disclaimer', e.target.value)}
+                className="w-full px-4 py-2.5 rounded-xl bg-black/40 border border-white/15 text-xs text-[#F7F2EB] focus:outline-none focus:border-[#D4AF37]"
+              />
             </div>
           </div>
         </div>
@@ -1535,6 +1946,101 @@ export const WebsiteContentEditor: React.FC<{ onPreviewWebsite?: () => void }> =
           </div>
         </div>
       )}
+
+      {/* =========================================================================
+          TAB: LEGAL & POLICIES (PRIVACY POLICY & TERMS OF SERVICE)
+          ========================================================================= */}
+      {activeCmsTab === 'legal' && (
+        <div className="p-6 rounded-2xl bg-[#1C140E] border border-white/10 space-y-6">
+          <div className="border-b border-white/10 pb-4">
+            <h3 className="text-base font-bold text-[#FFFFFF]">Legal Policies, Terms &amp; Privacy Content</h3>
+            <p className="text-xs text-[#F7F2EB]/60">Edit the official Privacy Policy and Terms &amp; Conditions pages directly without touching code.</p>
+          </div>
+
+          <div className="space-y-6">
+            {/* Privacy Policy */}
+            <div className="p-5 rounded-xl bg-black/30 border border-white/10 space-y-4">
+              <div className="flex items-center justify-between gap-4">
+                <h4 className="text-sm font-bold text-[#D4AF37] flex items-center gap-2">
+                  <ShieldCheck className="w-4 h-4" />
+                  Privacy Policy
+                </h4>
+                <div className="flex items-center gap-2">
+                  <span className="text-[11px] text-white/50">Last Updated:</span>
+                  <input
+                    type="text"
+                    value={draftWebsiteContent.legal?.privacyLastUpdated || ''}
+                    onChange={(e) => updateDraftField('legal', 'privacyLastUpdated', e.target.value)}
+                    className="px-2.5 py-1 rounded bg-black/60 border border-white/15 text-xs text-[#F7F2EB] w-36"
+                    placeholder="November 2026"
+                  />
+                </div>
+              </div>
+
+              <div className="space-y-2">
+                <label className="block text-xs font-bold text-[#F7F2EB]">Privacy Policy Page Title</label>
+                <input
+                  type="text"
+                  value={draftWebsiteContent.legal?.privacyPolicyTitle || ''}
+                  onChange={(e) => updateDraftField('legal', 'privacyPolicyTitle', e.target.value)}
+                  className="w-full px-4 py-2.5 rounded-xl bg-black/40 border border-white/15 text-xs text-[#F7F2EB] focus:outline-none focus:border-[#D4AF37]"
+                />
+              </div>
+
+              <div className="space-y-2">
+                <label className="block text-xs font-bold text-[#F7F2EB]">Privacy Policy Body Text</label>
+                <textarea
+                  rows={8}
+                  value={draftWebsiteContent.legal?.privacyPolicyContent || ''}
+                  onChange={(e) => updateDraftField('legal', 'privacyPolicyContent', e.target.value)}
+                  className="w-full px-4 py-2.5 rounded-xl bg-black/40 border border-white/15 text-xs text-[#F7F2EB] focus:outline-none focus:border-[#D4AF37] font-mono leading-relaxed"
+                />
+              </div>
+            </div>
+
+            {/* Terms of Service */}
+            <div className="p-5 rounded-xl bg-black/30 border border-white/10 space-y-4">
+              <div className="flex items-center justify-between gap-4">
+                <h4 className="text-sm font-bold text-[#D4AF37] flex items-center gap-2">
+                  <FileText className="w-4 h-4" />
+                  Terms &amp; Conditions
+                </h4>
+                <div className="flex items-center gap-2">
+                  <span className="text-[11px] text-white/50">Last Updated:</span>
+                  <input
+                    type="text"
+                    value={draftWebsiteContent.legal?.termsLastUpdated || ''}
+                    onChange={(e) => updateDraftField('legal', 'termsLastUpdated', e.target.value)}
+                    className="px-2.5 py-1 rounded bg-black/60 border border-white/15 text-xs text-[#F7F2EB] w-36"
+                    placeholder="November 2026"
+                  />
+                </div>
+              </div>
+
+              <div className="space-y-2">
+                <label className="block text-xs font-bold text-[#F7F2EB]">Terms Page Title</label>
+                <input
+                  type="text"
+                  value={draftWebsiteContent.legal?.termsTitle || ''}
+                  onChange={(e) => updateDraftField('legal', 'termsTitle', e.target.value)}
+                  className="w-full px-4 py-2.5 rounded-xl bg-black/40 border border-white/15 text-xs text-[#F7F2EB] focus:outline-none focus:border-[#D4AF37]"
+                />
+              </div>
+
+              <div className="space-y-2">
+                <label className="block text-xs font-bold text-[#F7F2EB]">Terms &amp; Conditions Body Text</label>
+                <textarea
+                  rows={8}
+                  value={draftWebsiteContent.legal?.termsContent || ''}
+                  onChange={(e) => updateDraftField('legal', 'termsContent', e.target.value)}
+                  className="w-full px-4 py-2.5 rounded-xl bg-black/40 border border-white/15 text-xs text-[#F7F2EB] focus:outline-none focus:border-[#D4AF37] font-mono leading-relaxed"
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
+

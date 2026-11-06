@@ -609,8 +609,9 @@ function FaminasPlatform() {
       )}
 
       {/* TOP ANNOUNCEMENT PROMO TICKER */}
-      {websiteContent?.header?.announcementActive !== false && (
-        <div className="bg-gradient-to-r from-[#21150F] via-[#254B37] to-[#21150F] text-[#F7F3EA] border-b border-[#C9A45C]/40 py-1.5 px-4 text-center text-[11px] sm:text-xs font-medium tracking-wide flex items-center justify-center gap-2">
+      {websiteContent?.header?.announcementActive !== false &&
+        websiteContent?.sectionVisibility?.announcementBar !== false && (
+          <div className="bg-gradient-to-r from-[#21150F] via-[#254B37] to-[#21150F] text-[#F7F3EA] border-b border-[#C9A45C]/40 py-1.5 px-4 text-center text-[11px] sm:text-xs font-medium tracking-wide flex items-center justify-center gap-2">
           <Sparkles className="w-3.5 h-3.5 text-[#C9A45C] shrink-0 animate-pulse-subtle" />
           <span>
             {websiteContent?.header?.announcementText || (
@@ -646,7 +647,11 @@ function FaminasPlatform() {
           </button>
 
           {/* Zone 2: Clean Desktop Navigation Links with Smooth Cursor-Following Sliding Pill */}
-          <DesktopNavbar currentPage={currentPage} onNavigate={navigateTo} />
+          <DesktopNavbar
+            currentPage={currentPage}
+            onNavigate={navigateTo}
+            customLinks={websiteContent?.navigation?.navLinks}
+          />
 
           {/* Zone 3: Prominent Order Online CTA + Order Bag + Mobile Menu Trigger */}
           <div className="flex items-center gap-2.5 shrink-0">
@@ -707,17 +712,24 @@ function FaminasPlatform() {
                 Explore Menu
               </button>
             </div>
-            {[
-              { id: 'home', label: 'Home' },
-              { id: 'about', label: 'About Us' },
-              { id: 'menu', label: 'Our Menu' },
-              { id: 'ordering', label: 'Order Online' },
-              { id: 'gallery', label: 'Gallery' },
-              { id: 'catering', label: 'Catering & Events' },
-              { id: 'contact', label: 'Contact Us' },
-              { id: 'order-confirmation', label: 'Track Live Orders' },
-              ...(isAdmin ? [{ id: 'admin', label: 'Admin Dashboard' }] : []),
-            ].map((item) => (
+            {(websiteContent?.navigation?.navLinks && websiteContent.navigation.navLinks.length > 0
+              ? [
+                  ...websiteContent.navigation.navLinks.filter((l) => l.isVisible !== false),
+                  { id: 'order-confirmation' as PageRoute, label: 'Track Live Orders' },
+                  ...(isAdmin ? [{ id: 'admin' as PageRoute, label: 'Admin Dashboard' }] : []),
+                ]
+              : [
+                  { id: 'home' as PageRoute, label: 'Home' },
+                  { id: 'about' as PageRoute, label: 'About Us' },
+                  { id: 'menu' as PageRoute, label: 'Our Menu' },
+                  { id: 'ordering' as PageRoute, label: 'Order Online' },
+                  { id: 'gallery' as PageRoute, label: 'Gallery' },
+                  { id: 'catering' as PageRoute, label: 'Catering & Events' },
+                  { id: 'contact' as PageRoute, label: 'Contact Us' },
+                  { id: 'order-confirmation' as PageRoute, label: 'Track Live Orders' },
+                  ...(isAdmin ? [{ id: 'admin' as PageRoute, label: 'Admin Dashboard' }] : []),
+                ]
+            ).map((item) => (
               <button
                 key={item.id}
                 onClick={() => navigateTo(item.id as PageRoute)}
@@ -844,12 +856,13 @@ function FaminasPlatform() {
         {currentPage === 'home' && (
           <div className="bg-[#F7F3EA] text-[#21150F]">
             {/* SECTION 2: FULL-WIDTH PREMIUM FOOD PHOTOGRAPHY SLIDER (#21150F ESPRESSO BROWN) */}
-            <section
-              aria-label="Featured Faminas Restaurant Photography Slider"
-              onMouseEnter={() => setIsSliderPaused(true)}
-              onMouseLeave={() => setIsSliderPaused(false)}
-              className="relative w-full overflow-hidden bg-[#21150F] border-b-2 border-[#C9A45C]"
-            >
+            {websiteContent?.sectionVisibility?.heroSlider !== false && (
+              <section
+                aria-label="Featured Faminas Restaurant Photography Slider"
+                onMouseEnter={() => setIsSliderPaused(true)}
+                onMouseLeave={() => setIsSliderPaused(false)}
+                className="relative w-full overflow-hidden bg-[#21150F] border-b-2 border-[#C9A45C]"
+              >
               <div className="relative min-h-[540px] sm:min-h-[600px] lg:min-h-[650px] flex items-center">
                 {activeSlidesList.map((slide, sIdx) => {
                   const isCurrent = sIdx === activeSlide;
@@ -1048,9 +1061,11 @@ function FaminasPlatform() {
                 </div>
               </div>
             </section>
+            )}
 
             {/* SECTION 3: WELCOME MESSAGE & RESTAURANT INTRODUCTION (#F7F3EA WARM IVORY) */}
-            <section className="py-12 sm:py-16 bg-[#F7F3EA] border-b border-[#C9A45C]/30 relative overflow-hidden">
+            {websiteContent?.sectionVisibility?.welcomeSection !== false && (
+              <section className="py-12 sm:py-16 bg-[#F7F3EA] border-b border-[#C9A45C]/30 relative overflow-hidden">
               {/* Subtle ambient glow behind welcome card */}
               <div className="absolute top-0 right-10 w-80 h-80 bg-[#C9A45C]/10 rounded-full blur-[90px] pointer-events-none" />
 
@@ -1096,12 +1111,16 @@ function FaminasPlatform() {
                 </div>
               </div>
             </section>
+            )}
 
             {/* HIGH-IMPACT PROMOTIONAL OFFER BANNERS */}
-            <PromotionalOfferBanners onNavigate={navigateTo} />
+            {websiteContent?.sectionVisibility?.promotionalBanners !== false && (
+              <PromotionalOfferBanners onNavigate={navigateTo} />
+            )}
 
             {/* SECTION 4: FEATURED SIGNATURE DISHES & TODAY'S DAILY SPECIALS */}
-            {dailySpecialDishes.length > 0 && (
+            {dailySpecialDishes.length > 0 &&
+              websiteContent?.sectionVisibility?.dailySpecials !== false && (
               <section className="py-12 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div className="p-6 sm:p-8 rounded-3xl faminas-glass-light-card border-2 border-[#C9A45C]/65 shadow-[0_20px_50px_rgba(33,21,15,0.1)] space-y-6">
                   <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 border-b border-[#C9A45C]/35 pb-4">
@@ -1280,85 +1299,99 @@ function FaminasPlatform() {
             </section>
 
             {/* SECTION 7: WHY CUSTOMERS SHOULD VISIT FAMINAS (#21150F ESPRESSO BROWN FEATURE BAND) */}
-            <section className="py-16 bg-[#21150F] text-[#F7F3EA] border-y-2 border-[#C9A45C]">
-              <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-10">
-                <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 items-center">
-                  <div className="lg:col-span-5 space-y-4">
-                    <span className="text-xs uppercase tracking-widest text-[#C9A45C] font-bold">
-                      Five-Star Hospitality in South Jersey
-                    </span>
-                    <h2 className="font-serif-display text-3xl md:text-4xl font-bold text-[#FFFFFF]">
-                      Why Guests Love Dining at FAMINAS
-                    </h2>
-                    <p className="text-sm md:text-base text-[#F7F3EA]/85 leading-relaxed">
-                      Located at <strong>577 Blackwood-Clementon Road, Lindenwold, NJ 08021</strong>,
-                      we bring together traditional West African culinary craftsmanship and classic
-                      American grilling in a welcoming, family-friendly setting.
-                    </p>
-                    <div className="flex flex-wrap gap-3 pt-2">
-                      <button
-                        onClick={() => navigateTo('about')}
-                        className="px-5 py-2.5 rounded-lg bg-[#C9A45C] text-[#21150F] text-xs font-bold uppercase tracking-wider hover:bg-[#B89146] transition-colors cursor-pointer"
-                      >
-                        Our Story
-                      </button>
-                      <a
-                        href="https://www.google.com/maps/search/?api=1&query=577+Blackwood-Clementon+Road+Lindenwold+NJ+08021"
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="px-5 py-2.5 rounded-lg bg-[#254B37] hover:bg-[#1D3B2B] border border-[#C9A45C]/50 text-xs font-bold text-[#FFFFFF] transition-colors inline-flex items-center gap-1.5"
-                      >
-                        <MapPin className="w-3.5 h-3.5 text-[#C9A45C]" />
-                        Get Directions
-                      </a>
+            {websiteContent?.sectionVisibility?.whyChooseUs !== false && (
+              <section className="py-16 bg-[#21150F] text-[#F7F3EA] border-y-2 border-[#C9A45C]">
+                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-10">
+                  <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 items-center">
+                    <div className="lg:col-span-5 space-y-4">
+                      <span className="text-xs uppercase tracking-widest text-[#C9A45C] font-bold">
+                        {websiteContent?.whyChooseUs?.badge || 'Five-Star Hospitality in South Jersey'}
+                      </span>
+                      <h2 className="font-serif-display text-3xl md:text-4xl font-bold text-[#FFFFFF]">
+                        {websiteContent?.whyChooseUs?.title || 'Why Guests Love Dining at FAMINAS'}
+                      </h2>
+                      <p className="text-sm md:text-base text-[#F7F3EA]/85 leading-relaxed">
+                        {websiteContent?.whyChooseUs?.description || (
+                          <>
+                            Located at <strong>577 Blackwood-Clementon Road, Lindenwold, NJ 08021</strong>,
+                            we bring together traditional West African culinary craftsmanship and classic
+                            American grilling in a welcoming, family-friendly setting.
+                          </>
+                        )}
+                      </p>
+                      <div className="flex flex-wrap gap-3 pt-2">
+                        <button
+                          onClick={() => navigateTo('about')}
+                          className="px-5 py-2.5 rounded-lg bg-[#C9A45C] text-[#21150F] text-xs font-bold uppercase tracking-wider hover:bg-[#B89146] transition-colors cursor-pointer"
+                        >
+                          Our Story
+                        </button>
+                        <a
+                          href={websiteContent?.contact?.googleMapsEmbedUrl || "https://www.google.com/maps/search/?api=1&query=577+Blackwood-Clementon+Road+Lindenwold+NJ+08021"}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="px-5 py-2.5 rounded-lg bg-[#254B37] hover:bg-[#1D3B2B] border border-[#C9A45C]/50 text-xs font-bold text-[#FFFFFF] transition-colors inline-flex items-center gap-1.5"
+                        >
+                          <MapPin className="w-3.5 h-3.5 text-[#C9A45C]" />
+                          Get Directions
+                        </a>
+                      </div>
                     </div>
-                  </div>
 
-                  <div className="lg:col-span-7 grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    <div className="p-6 bg-[#3B3029] border border-[#C9A45C]/35 rounded-xl space-y-2">
-                      <span className="text-xs font-mono font-bold text-[#C9A45C]">01</span>
-                      <h3 className="font-serif-display text-xl font-bold text-[#FFFFFF]">
-                        Authentic Sierra Leonean Recipes
-                      </h3>
-                      <p className="text-xs text-[#F7F3EA]/80 leading-relaxed">
-                        True Freetown and West African preparation—from Cassava Leaf and Kran Kran
-                        Palava Sauce to Achecke with Grill Fish, Foofoo, and Pepper Soup.
-                      </p>
-                    </div>
-                    <div className="p-6 bg-[#3B3029] border border-[#C9A45C]/35 rounded-xl space-y-2">
-                      <span className="text-xs font-mono font-bold text-[#C9A45C]">02</span>
-                      <h3 className="font-serif-display text-xl font-bold text-[#FFFFFF]">
-                        Something for Every Guest
-                      </h3>
-                      <p className="text-xs text-[#F7F3EA]/80 leading-relaxed">
-                        Bridge generations at one table with rich African leaf stews alongside
-                        classic American hamburgers, cheesesteaks, wings, and mac &amp; cheese.
-                      </p>
-                    </div>
-                    <div className="p-6 bg-[#3B3029] border border-[#C9A45C]/35 rounded-xl space-y-2">
-                      <span className="text-xs font-mono font-bold text-[#C9A45C]">03</span>
-                      <h3 className="font-serif-display text-xl font-bold text-[#FFFFFF]">
-                        Easy Online &amp; WhatsApp Ordering
-                      </h3>
-                      <p className="text-xs text-[#F7F3EA]/80 leading-relaxed">
-                        Order directly through our website for pickup or delivery, or send an
-                        instant itemized order via WhatsApp to +1 (856) 522-3029.
-                      </p>
-                    </div>
-                    <div className="p-6 bg-[#3B3029] border border-[#C9A45C]/35 rounded-xl space-y-2">
-                      <span className="text-xs font-mono font-bold text-[#C9A45C]">04</span>
-                      <h3 className="font-serif-display text-xl font-bold text-[#FFFFFF]">
-                        Freshly Prepared Generous Portions
-                      </h3>
-                      <p className="text-xs text-[#F7F3EA]/80 leading-relaxed">
-                        Every plate is cooked with fresh ingredients, whole grilled fish, tender
-                        meats, and vibrant spices—served clean and hot.
-                      </p>
+                    <div className="lg:col-span-7 grid grid-cols-1 sm:grid-cols-2 gap-4">
+                      {(websiteContent?.whyChooseUs?.cards && websiteContent.whyChooseUs.cards.length > 0
+                        ? websiteContent.whyChooseUs.cards
+                        : [
+                            {
+                              id: '1',
+                              number: '01',
+                              title: 'Authentic Sierra Leonean Recipes',
+                              description:
+                                'True Freetown and West African preparation—from Cassava Leaf and Kran Kran Palava Sauce to Achecke with Grill Fish, Foofoo, and Pepper Soup.',
+                            },
+                            {
+                              id: '2',
+                              number: '02',
+                              title: 'Something for Every Guest',
+                              description:
+                                'Bridge generations at one table with rich African leaf stews alongside classic American hamburgers, cheesesteaks, wings, and mac & cheese.',
+                            },
+                            {
+                              id: '3',
+                              number: '03',
+                              title: 'Easy Online & WhatsApp Ordering',
+                              description:
+                                'Order directly through our website for pickup or delivery, or send an instant itemized order via WhatsApp to +1 (856) 522-3029.',
+                            },
+                            {
+                              id: '4',
+                              number: '04',
+                              title: 'Freshly Prepared Generous Portions',
+                              description:
+                                'Every plate is cooked with fresh ingredients, whole grilled fish, tender meats, and vibrant spices—served clean and hot.',
+                            },
+                          ]
+                      ).map((card, idx) => (
+                        <div
+                          key={card.id || idx}
+                          className="p-6 bg-[#3B3029] border border-[#C9A45C]/35 rounded-xl space-y-2"
+                        >
+                          <span className="text-xs font-mono font-bold text-[#C9A45C]">
+                            {card.number || `0${idx + 1}`}
+                          </span>
+                          <h3 className="font-serif-display text-xl font-bold text-[#FFFFFF]">
+                            {card.title}
+                          </h3>
+                          <p className="text-xs text-[#F7F3EA]/80 leading-relaxed">
+                            {card.description}
+                          </p>
+                        </div>
+                      ))}
                     </div>
                   </div>
                 </div>
-              </div>
-            </section>
+              </section>
+            )}
 
             {/* SECTION 8: CATERING AND SPECIAL OCCASIONS */}
             <section className="py-12 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -1396,15 +1429,19 @@ function FaminasPlatform() {
             </section>
 
             {/* LIVE KITCHEN VIDEOS & REAL CULINARY SHORTS SHOWCASE */}
-            <CulinaryVideoShowcase
-              menuItems={menuItems}
-              onOrderDish={(it) => addToCart(it, 1)}
-              onViewDishDetails={openFoodDetails}
-            />
+            {websiteContent?.sectionVisibility?.kitchenVideos !== false && (
+              <CulinaryVideoShowcase
+                menuItems={menuItems}
+                onOrderDish={(it) => addToCart(it, 1)}
+                onViewDishDetails={openFoodDetails}
+              />
+            )}
 
             {/* SECTION 9: BEAUTIFUL RESTAURANT FOOD GALLERY & OFFICIAL TWO-PAGE PRINT MENU */}
             <section className="py-8 max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 space-y-10">
-              <PrintReadyMenuSheet onSelectDish={openFoodDetails} />
+              {websiteContent?.sectionVisibility?.printMenuSheet !== false && (
+                <PrintReadyMenuSheet onSelectDish={openFoodDetails} />
+              )}
 
               <div className="p-6 sm:p-8 rounded-2xl bg-[#FFFFFF] border border-[#C9A45C]/45 shadow-[0_12px_32px_rgba(33,21,15,0.06)] space-y-6">
                 <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 border-b border-[#C9A45C]/30 pb-4">
@@ -1464,7 +1501,8 @@ function FaminasPlatform() {
             <section className="py-14 bg-[#F7F3EA] border-t border-[#C9A45C]/35">
               <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12">
                 {/* Section 10: Customer Testimonials Using Genuine Reviews Only */}
-                <div className="p-6 sm:p-8 rounded-2xl bg-[#FFFFFF] border border-[#C9A45C]/40 shadow-sm space-y-6">
+                {websiteContent?.sectionVisibility?.customerReviews !== false && (
+                  <div className="p-6 sm:p-8 rounded-2xl bg-[#FFFFFF] border border-[#C9A45C]/40 shadow-sm space-y-6">
                   <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
                     <div>
                       <span className="text-xs uppercase tracking-widest text-[#254B37] font-bold">
@@ -1522,131 +1560,141 @@ function FaminasPlatform() {
                     </div>
                   )}
                 </div>
+                )}
 
                 {/* Section 11: Restaurant Location, VIP Newsletter & Local Google SEO */}
                 <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
                   {/* Newsletter & Special Offers Signup */}
-                  <div className="lg:col-span-7 p-6 sm:p-8 rounded-2xl bg-[#21150F] text-[#F7F3EA] border-2 border-[#C9A45C]/60 space-y-4 shadow-lg">
-                    <span className="text-xs uppercase tracking-widest text-[#C9A45C] font-bold">
-                      VIP Guest Club · Daily Specials &amp; Seasonal Offers
-                    </span>
-                    <h3 className="font-serif-display text-2xl sm:text-3xl font-bold text-[#FFFFFF]">
-                      Receive Chef&apos;s Daily Specials &amp; Catering Promotions
-                    </h3>
-                    <p className="text-xs sm:text-sm text-[#F7F3EA]/85 leading-relaxed">
-                      Join our Lindenwold guest list to get notified when fresh batches of Achecke
-                      with Grill Fish, Cassava Leaf, Rice and Beans with Oxtail, and weekend family
-                      platters come out of the kitchen.
-                    </p>
+                  {websiteContent?.sectionVisibility?.vipNewsletter !== false && (
+                    <div className="lg:col-span-7 p-6 sm:p-8 rounded-2xl bg-[#21150F] text-[#F7F3EA] border-2 border-[#C9A45C]/60 space-y-4 shadow-lg">
+                      <span className="text-xs uppercase tracking-widest text-[#C9A45C] font-bold">
+                        {websiteContent?.vipNewsletter?.badge || 'VIP Guest Club · Daily Specials & Seasonal Offers'}
+                      </span>
+                      <h3 className="font-serif-display text-2xl sm:text-3xl font-bold text-[#FFFFFF]">
+                        {websiteContent?.vipNewsletter?.title || 'Receive Chef\'s Daily Specials & Catering Promotions'}
+                      </h3>
+                      <p className="text-xs sm:text-sm text-[#F7F3EA]/85 leading-relaxed">
+                        {websiteContent?.vipNewsletter?.description ||
+                          'Join our Lindenwold guest list to get notified when fresh batches of Achecke with Grill Fish, Cassava Leaf, Rice and Beans with Oxtail, and weekend family platters come out of the kitchen.'}
+                      </p>
 
-                    <form
-                      onSubmit={(e) => {
-                        e.preventDefault();
-                        subscribeNewsletter({
-                          fullName: subName,
-                          email: subEmail,
-                          phone: subPhone,
-                          consented: subConsent,
-                        });
-                        if (subConsent && (subEmail.trim() || subPhone.trim())) {
-                          setSubName('');
-                          setSubEmail('');
-                          setSubPhone('');
-                        }
-                      }}
-                      className="space-y-3 pt-1"
-                    >
-                      <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-                        <input
-                          type="text"
-                          value={subName}
-                          onChange={(e) => setSubName(e.target.value)}
-                          placeholder="Your Name"
-                          className="px-3.5 py-2.5 rounded-lg bg-[#3B3029] border border-[#C9A45C]/40 text-xs sm:text-sm text-[#FFFFFF] placeholder:text-[#F7F3EA]/60 focus:outline-none focus:border-[#C9A45C]"
-                        />
-                        <input
-                          type="email"
-                          value={subEmail}
-                          onChange={(e) => setSubEmail(e.target.value)}
-                          placeholder="Email Address"
-                          className="px-3.5 py-2.5 rounded-lg bg-[#3B3029] border border-[#C9A45C]/40 text-xs sm:text-sm text-[#FFFFFF] placeholder:text-[#F7F3EA]/60 focus:outline-none focus:border-[#C9A45C]"
-                        />
-                        <input
-                          type="tel"
-                          value={subPhone}
-                          onChange={(e) => setSubPhone(e.target.value)}
-                          placeholder="Mobile Phone (Optional)"
-                          className="px-3.5 py-2.5 rounded-lg bg-[#3B3029] border border-[#C9A45C]/40 text-xs sm:text-sm text-[#FFFFFF] placeholder:text-[#F7F3EA]/60 focus:outline-none focus:border-[#C9A45C]"
-                        />
-                      </div>
-
-                      <label className="flex items-start gap-2.5 text-xs text-[#F7F3EA]/85 cursor-pointer pt-1">
-                        <input
-                          type="checkbox"
-                          checked={subConsent}
-                          onChange={(e) => setSubConsent(e.target.checked)}
-                          className="mt-0.5 accent-[#C9A45C]"
-                        />
-                        <span>
-                          I consent to receive occasional menu updates, Daily Specials alerts, and
-                          promotional offers from Faminas African and Americans Restaurant. You may
-                          unsubscribe at any time.
-                        </span>
-                      </label>
-
-                      <button
-                        type="submit"
-                        className="inline-flex items-center gap-2 px-6 py-3 rounded-lg bg-[#C9A45C] hover:bg-[#B89146] text-[#21150F] font-bold text-xs uppercase tracking-wider transition-colors cursor-pointer"
+                      <form
+                        onSubmit={(e) => {
+                          e.preventDefault();
+                          subscribeNewsletter({
+                            fullName: subName,
+                            email: subEmail,
+                            phone: subPhone,
+                            consented: subConsent,
+                          });
+                          if (subConsent && (subEmail.trim() || subPhone.trim())) {
+                            setSubName('');
+                            setSubEmail('');
+                            setSubPhone('');
+                          }
+                        }}
+                        className="space-y-3 pt-1"
                       >
-                        <Mail className="w-3.5 h-3.5" />
-                        Subscribe for Special Offers
-                      </button>
-                    </form>
-                  </div>
+                        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                          <input
+                            type="text"
+                            value={subName}
+                            onChange={(e) => setSubName(e.target.value)}
+                            placeholder="Your Name"
+                            className="px-3.5 py-2.5 rounded-lg bg-[#3B3029] border border-[#C9A45C]/40 text-xs sm:text-sm text-[#FFFFFF] placeholder:text-[#F7F3EA]/60 focus:outline-none focus:border-[#C9A45C]"
+                          />
+                          <input
+                            type="email"
+                            value={subEmail}
+                            onChange={(e) => setSubEmail(e.target.value)}
+                            placeholder="Email Address"
+                            className="px-3.5 py-2.5 rounded-lg bg-[#3B3029] border border-[#C9A45C]/40 text-xs sm:text-sm text-[#FFFFFF] placeholder:text-[#F7F3EA]/60 focus:outline-none focus:border-[#C9A45C]"
+                          />
+                          <input
+                            type="tel"
+                            value={subPhone}
+                            onChange={(e) => setSubPhone(e.target.value)}
+                            placeholder="Mobile Phone (Optional)"
+                            className="px-3.5 py-2.5 rounded-lg bg-[#3B3029] border border-[#C9A45C]/40 text-xs sm:text-sm text-[#FFFFFF] placeholder:text-[#F7F3EA]/60 focus:outline-none focus:border-[#C9A45C]"
+                          />
+                        </div>
+
+                        <label className="flex items-start gap-2.5 text-xs text-[#F7F3EA]/85 cursor-pointer pt-1">
+                          <input
+                            type="checkbox"
+                            checked={subConsent}
+                            onChange={(e) => setSubConsent(e.target.checked)}
+                            className="mt-0.5 accent-[#C9A45C]"
+                          />
+                          <span>
+                            {websiteContent?.vipNewsletter?.disclaimer ||
+                              'I consent to receive occasional menu updates, Daily Specials alerts, and promotional offers from Faminas African and Americans Restaurant. You may unsubscribe at any time.'}
+                          </span>
+                        </label>
+
+                        <button
+                          type="submit"
+                          className="inline-flex items-center gap-2 px-6 py-3 rounded-lg bg-[#C9A45C] hover:bg-[#B89146] text-[#21150F] font-bold text-xs uppercase tracking-wider transition-colors cursor-pointer"
+                        >
+                          <Mail className="w-3.5 h-3.5" />
+                          {websiteContent?.vipNewsletter?.buttonText || 'Subscribe for Special Offers'}
+                        </button>
+                      </form>
+                    </div>
+                  )}
 
                   {/* Restaurant Location & Local SEO Discovery Box */}
-                  <div className="lg:col-span-5 p-6 sm:p-8 rounded-2xl bg-[#FFFFFF] border border-[#C9A45C]/45 space-y-4 shadow-sm">
-                    <span className="text-xs uppercase tracking-widest text-[#254B37] font-bold">
-                      Visit Us in Lindenwold, New Jersey
-                    </span>
-                    <h3 className="font-serif-display text-2xl font-bold text-[#21150F]">
-                      Location &amp; Google Search Discovery
-                    </h3>
-                    <div className="space-y-1.5 text-xs sm:text-sm text-[#3B3029]">
-                      <p className="font-bold text-[#21150F]">
-                        577 Blackwood-Clementon Road, Lindenwold, NJ 08021, USA
-                      </p>
-                      <p>
-                        Phone:{' '}
-                        <a
-                          href="tel:+18565223029"
-                          className="font-mono font-bold text-[#254B37] hover:underline"
-                        >
-                          +1 (856) 522-3029
-                        </a>{' '}
-                        · Website: <strong>faminasrestaurant.com</strong>
-                      </p>
-                      <p className="text-xs text-[#3B3029]/85 pt-1">{settings.openingHours}</p>
+                  {websiteContent?.sectionVisibility?.mapAndLocation !== false && (
+                    <div
+                      className={`${
+                        websiteContent?.sectionVisibility?.vipNewsletter === false
+                          ? 'lg:col-span-12'
+                          : 'lg:col-span-5'
+                      } p-6 sm:p-8 rounded-2xl bg-[#FFFFFF] border border-[#C9A45C]/45 space-y-4 shadow-sm`}
+                    >
+                      <span className="text-xs uppercase tracking-widest text-[#254B37] font-bold">
+                        Visit Us in Lindenwold, New Jersey
+                      </span>
+                      <h3 className="font-serif-display text-2xl font-bold text-[#21150F]">
+                        Location &amp; Google Search Discovery
+                      </h3>
+                      <div className="space-y-1.5 text-xs sm:text-sm text-[#3B3029]">
+                        <p className="font-bold text-[#21150F]">
+                          {websiteContent?.contact?.address ||
+                            '577 Blackwood-Clementon Road, Lindenwold, NJ 08021, USA'}
+                        </p>
+                        <p>
+                          Phone:{' '}
+                          <a
+                            href={`tel:${websiteContent?.contact?.phone || '+18565223029'}`}
+                            className="font-mono font-bold text-[#254B37] hover:underline"
+                          >
+                            {websiteContent?.contact?.phone || '+1 (856) 522-3029'}
+                          </a>{' '}
+                          · Website: <strong>faminasrestaurant.com</strong>
+                        </p>
+                        <p className="text-xs text-[#3B3029]/85 pt-1">{settings.openingHours}</p>
+                      </div>
+                      <div className="flex flex-wrap gap-1.5 pt-2">
+                        {[
+                          'African restaurant in Lindenwold NJ',
+                          'Sierra Leonean restaurant in New Jersey',
+                          'West African food near Lindenwold',
+                          'African food in New Jersey',
+                          'Sierra Leonean food near me',
+                        ].map((kw) => (
+                          <button
+                            key={kw}
+                            type="button"
+                            onClick={() => navigateTo('menu')}
+                            className="px-2.5 py-1 rounded-md bg-[#F7F3EA] hover:bg-[#C9A45C] border border-[#C9A45C]/40 text-[11px] font-medium text-[#21150F] transition-colors cursor-pointer"
+                          >
+                            {kw}
+                          </button>
+                        ))}
+                      </div>
                     </div>
-                    <div className="flex flex-wrap gap-1.5 pt-2">
-                      {[
-                        'African restaurant in Lindenwold NJ',
-                        'Sierra Leonean restaurant in New Jersey',
-                        'West African food near Lindenwold',
-                        'African food in New Jersey',
-                        'Sierra Leonean food near me',
-                      ].map((kw) => (
-                        <button
-                          key={kw}
-                          type="button"
-                          onClick={() => navigateTo('menu')}
-                          className="px-2.5 py-1 rounded-md bg-[#F7F3EA] hover:bg-[#C9A45C] border border-[#C9A45C]/40 text-[11px] font-medium text-[#21150F] transition-colors cursor-pointer"
-                        >
-                          {kw}
-                        </button>
-                      ))}
-                    </div>
-                  </div>
+                  )}
                 </div>
               </div>
             </section>
@@ -3836,34 +3884,29 @@ function FaminasPlatform() {
         {/* =========================================================
             PAGE 12: PRIVACY POLICY
             ========================================================= */}
+        {/* =========================================================
+            PAGE 12: PRIVACY POLICY
+            ========================================================= */}
         {currentPage === 'privacy' && (
           <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-14 space-y-6">
             <div className="p-8 bg-[#FFFFFF] border border-[#C9A45C]/45 rounded-2xl shadow-md space-y-6">
-              <h1 className="font-serif-display text-4xl font-bold text-[#21150F]">
-                Privacy Policy
-              </h1>
-              <p className="text-sm text-[#3B3029] leading-relaxed">
-                Faminas African and Americans Restaurant respects your privacy and protects your
-                personal order and contact information using strict Attribute-Based Access Control
-                security rules.
-              </p>
-              <div className="space-y-4 text-sm text-[#3B3029] leading-relaxed">
-                <h2 className="font-serif-display text-2xl font-bold text-[#254B37]">
-                  1. Information We Collect
-                </h2>
-                <p>
-                  When you place an order or submit a catering enquiry, we collect your name, phone
-                  number, delivery address (for delivery orders), and order preferences solely to
-                  prepare and fulfill your meal.
-                </p>
-                <h2 className="font-serif-display text-2xl font-bold text-[#254B37]">
-                  2. Data Isolation &amp; Security
-                </h2>
-                <p>
-                  Your customer profile, order records, and catering enquiries are strictly isolated
-                  in our database so that only you and authorised restaurant administrators can view
-                  them.
-                </p>
+              <div className="flex items-center justify-between border-b border-[#C9A45C]/25 pb-4">
+                <h1 className="font-serif-display text-4xl font-bold text-[#21150F]">
+                  {websiteContent?.legal?.privacyPolicyTitle || 'Privacy Policy'}
+                </h1>
+                {websiteContent?.legal?.privacyLastUpdated && (
+                  <span className="text-xs text-[#3B3029]/60 font-mono">
+                    Last Updated: {websiteContent.legal.privacyLastUpdated}
+                  </span>
+                )}
+              </div>
+              <div className="prose max-w-none text-sm text-[#3B3029] leading-relaxed whitespace-pre-line">
+                {websiteContent?.legal?.privacyPolicyContent || (
+                  <p>
+                    Faminas African and Americans Restaurant respects your privacy and protects your
+                    personal order and contact information.
+                  </p>
+                )}
               </div>
             </div>
           </div>
@@ -3875,25 +3918,24 @@ function FaminasPlatform() {
         {currentPage === 'terms' && (
           <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-14 space-y-6">
             <div className="p-8 bg-[#FFFFFF] border border-[#C9A45C]/45 rounded-2xl shadow-md space-y-6">
-              <h1 className="font-serif-display text-4xl font-bold text-[#21150F]">
-                Terms and Conditions
-              </h1>
-              <div className="space-y-4 text-sm text-[#3B3029] leading-relaxed">
-                <h2 className="font-serif-display text-2xl font-bold text-[#254B37]">
-                  1. Menu Availability &amp; Pricing
-                </h2>
-                <p>
-                  All dishes at Faminas African and Americans Restaurant are freshly prepared. Menu
-                  availability, delivery fees, and applicable taxes are displayed clearly prior to
-                  checkout.
-                </p>
-                <h2 className="font-serif-display text-2xl font-bold text-[#254B37]">
-                  2. Orders, Pickup &amp; Delivery
-                </h2>
-                <p>
-                  Customers are responsible for providing accurate contact and delivery address
-                  details. Online payments are verified prior to final order completion.
-                </p>
+              <div className="flex items-center justify-between border-b border-[#C9A45C]/25 pb-4">
+                <h1 className="font-serif-display text-4xl font-bold text-[#21150F]">
+                  {websiteContent?.legal?.termsTitle || 'Terms and Conditions'}
+                </h1>
+                {websiteContent?.legal?.termsLastUpdated && (
+                  <span className="text-xs text-[#3B3029]/60 font-mono">
+                    Last Updated: {websiteContent.legal.termsLastUpdated}
+                  </span>
+                )}
+              </div>
+              <div className="prose max-w-none text-sm text-[#3B3029] leading-relaxed whitespace-pre-line">
+                {websiteContent?.legal?.termsContent || (
+                  <p>
+                    All dishes at Faminas African and Americans Restaurant are freshly prepared. Menu
+                    availability, delivery fees, and applicable taxes are displayed clearly prior to
+                    checkout.
+                  </p>
+                )}
               </div>
             </div>
           </div>

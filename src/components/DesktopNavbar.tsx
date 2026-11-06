@@ -4,6 +4,7 @@ import type { PageRoute } from '../types/restaurant';
 interface DesktopNavbarProps {
   currentPage: PageRoute;
   onNavigate: (page: PageRoute) => void;
+  customLinks?: { id: PageRoute; label: string; isVisible: boolean }[];
 }
 
 const NAV_LINKS: { id: PageRoute; label: string }[] = [
@@ -16,11 +17,15 @@ const NAV_LINKS: { id: PageRoute; label: string }[] = [
   { id: 'contact', label: 'Contact Us' },
 ];
 
-export const DesktopNavbar: React.FC<DesktopNavbarProps> = React.memo(({ currentPage, onNavigate }) => {
+export const DesktopNavbar: React.FC<DesktopNavbarProps> = React.memo(({ currentPage, onNavigate, customLinks }) => {
   const [hoveredKey, setHoveredKey] = useState<PageRoute | null>(null);
   const navRef = useRef<HTMLElement | null>(null);
   const pillRef = useRef<HTMLSpanElement | null>(null);
   const itemRefs = useRef<Record<string, HTMLButtonElement | null>>({});
+
+  const linksToRender = customLinks && customLinks.length > 0
+    ? customLinks.filter((l) => l.isVisible !== false)
+    : NAV_LINKS;
 
   const activeKey = hoveredKey ?? currentPage;
 
@@ -114,7 +119,7 @@ export const DesktopNavbar: React.FC<DesktopNavbarProps> = React.memo(({ current
         className="pointer-events-none absolute top-1/2 left-0 h-[34px] rounded-full bg-gradient-to-r from-[#C9A45C]/35 via-[#254B37]/50 to-[#C9A45C]/35 border border-[#C9A45C]/85 shadow-[0_3px_14px_rgba(201,164,92,0.35),inset_0_1px_0_rgba(255,255,255,0.25)] transition-[transform,width,opacity] duration-200 ease-[cubic-bezier(0.16,1,0.3,1)] z-0 will-change-[transform,width] opacity-0"
       />
 
-      {NAV_LINKS.map((navLink) => {
+      {linksToRender.map((navLink) => {
         const isHighlighted = activeKey === navLink.id;
         return (
           <button

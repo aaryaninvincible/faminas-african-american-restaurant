@@ -371,25 +371,63 @@ export const RestaurantProvider: React.FC<{ children: React.ReactNode }> = ({ ch
     }
   });
 
+  // Helper to deep merge website content with complete defaults
+  const mergeWebsiteContent = (raw: any): WebsiteContent => {
+    if (!raw || typeof raw !== 'object') return INITIAL_WEBSITE_CONTENT;
+    return {
+      ...INITIAL_WEBSITE_CONTENT,
+      ...raw,
+      branding: { ...INITIAL_WEBSITE_CONTENT.branding, ...(raw.branding || {}) },
+      sectionVisibility: { ...INITIAL_WEBSITE_CONTENT.sectionVisibility, ...(raw.sectionVisibility || {}) },
+      navigation: {
+        ...INITIAL_WEBSITE_CONTENT.navigation,
+        navLinks: raw.navigation?.navLinks || INITIAL_WEBSITE_CONTENT.navigation.navLinks,
+      },
+      header: { ...INITIAL_WEBSITE_CONTENT.header, ...(raw.header || {}) },
+      home: { ...INITIAL_WEBSITE_CONTENT.home, ...(raw.home || {}) },
+      whyChooseUs: {
+        ...INITIAL_WEBSITE_CONTENT.whyChooseUs,
+        ...(raw.whyChooseUs || {}),
+        cards: raw.whyChooseUs?.cards || INITIAL_WEBSITE_CONTENT.whyChooseUs.cards,
+      },
+      vipNewsletter: { ...INITIAL_WEBSITE_CONTENT.vipNewsletter, ...(raw.vipNewsletter || {}) },
+      about: { ...INITIAL_WEBSITE_CONTENT.about, ...(raw.about || {}) },
+      videos: {
+        ...INITIAL_WEBSITE_CONTENT.videos,
+        ...(raw.videos || {}),
+        videoItems: raw.videos?.videoItems || INITIAL_WEBSITE_CONTENT.videos.videoItems,
+      },
+      catering: {
+        ...INITIAL_WEBSITE_CONTENT.catering,
+        ...(raw.catering || {}),
+        packages: raw.catering?.packages || INITIAL_WEBSITE_CONTENT.catering.packages,
+      },
+      specialOffers: {
+        ...INITIAL_WEBSITE_CONTENT.specialOffers,
+        ...(raw.specialOffers || {}),
+        offersList: raw.specialOffers?.offersList || INITIAL_WEBSITE_CONTENT.specialOffers.offersList,
+      },
+      reviews: {
+        ...INITIAL_WEBSITE_CONTENT.reviews,
+        ...(raw.reviews || {}),
+        items: raw.reviews?.items || INITIAL_WEBSITE_CONTENT.reviews.items,
+      },
+      contact: {
+        ...INITIAL_WEBSITE_CONTENT.contact,
+        ...(raw.contact || {}),
+        openingHours: raw.contact?.openingHours || INITIAL_WEBSITE_CONTENT.contact.openingHours,
+      },
+      footer: { ...INITIAL_WEBSITE_CONTENT.footer, ...(raw.footer || {}) },
+      legal: { ...INITIAL_WEBSITE_CONTENT.legal, ...(raw.legal || {}) },
+    };
+  };
+
   // Website CMS Content States (Live Published vs Draft)
   const [websiteContent, setWebsiteContent] = useState<WebsiteContent>(() => {
     try {
       const saved = localStorage.getItem('faminas_published_website_content_v1');
       if (saved) {
-        const parsed = JSON.parse(saved);
-        return {
-          ...INITIAL_WEBSITE_CONTENT,
-          ...parsed,
-          header: { ...INITIAL_WEBSITE_CONTENT.header, ...(parsed.header || {}) },
-          home: { ...INITIAL_WEBSITE_CONTENT.home, ...(parsed.home || {}) },
-          about: { ...INITIAL_WEBSITE_CONTENT.about, ...(parsed.about || {}) },
-          videos: { ...INITIAL_WEBSITE_CONTENT.videos, ...(parsed.videos || {}) },
-          catering: { ...INITIAL_WEBSITE_CONTENT.catering, ...(parsed.catering || {}) },
-          specialOffers: { ...INITIAL_WEBSITE_CONTENT.specialOffers, ...(parsed.specialOffers || {}) },
-          reviews: { ...INITIAL_WEBSITE_CONTENT.reviews, ...(parsed.reviews || {}) },
-          contact: { ...INITIAL_WEBSITE_CONTENT.contact, ...(parsed.contact || {}) },
-          footer: { ...INITIAL_WEBSITE_CONTENT.footer, ...(parsed.footer || {}) },
-        };
+        return mergeWebsiteContent(JSON.parse(saved));
       }
     } catch (e) {
       console.warn('Error reading stored published website content:', e);
@@ -401,37 +439,11 @@ export const RestaurantProvider: React.FC<{ children: React.ReactNode }> = ({ ch
     try {
       const savedDraft = localStorage.getItem('faminas_draft_website_content_v1');
       if (savedDraft) {
-        const parsed = JSON.parse(savedDraft);
-        return {
-          ...INITIAL_WEBSITE_CONTENT,
-          ...parsed,
-          header: { ...INITIAL_WEBSITE_CONTENT.header, ...(parsed.header || {}) },
-          home: { ...INITIAL_WEBSITE_CONTENT.home, ...(parsed.home || {}) },
-          about: { ...INITIAL_WEBSITE_CONTENT.about, ...(parsed.about || {}) },
-          videos: { ...INITIAL_WEBSITE_CONTENT.videos, ...(parsed.videos || {}) },
-          catering: { ...INITIAL_WEBSITE_CONTENT.catering, ...(parsed.catering || {}) },
-          specialOffers: { ...INITIAL_WEBSITE_CONTENT.specialOffers, ...(parsed.specialOffers || {}) },
-          reviews: { ...INITIAL_WEBSITE_CONTENT.reviews, ...(parsed.reviews || {}) },
-          contact: { ...INITIAL_WEBSITE_CONTENT.contact, ...(parsed.contact || {}) },
-          footer: { ...INITIAL_WEBSITE_CONTENT.footer, ...(parsed.footer || {}) },
-        };
+        return mergeWebsiteContent(JSON.parse(savedDraft));
       }
       const savedPub = localStorage.getItem('faminas_published_website_content_v1');
       if (savedPub) {
-        const parsed = JSON.parse(savedPub);
-        return {
-          ...INITIAL_WEBSITE_CONTENT,
-          ...parsed,
-          header: { ...INITIAL_WEBSITE_CONTENT.header, ...(parsed.header || {}) },
-          home: { ...INITIAL_WEBSITE_CONTENT.home, ...(parsed.home || {}) },
-          about: { ...INITIAL_WEBSITE_CONTENT.about, ...(parsed.about || {}) },
-          videos: { ...INITIAL_WEBSITE_CONTENT.videos, ...(parsed.videos || {}) },
-          catering: { ...INITIAL_WEBSITE_CONTENT.catering, ...(parsed.catering || {}) },
-          specialOffers: { ...INITIAL_WEBSITE_CONTENT.specialOffers, ...(parsed.specialOffers || {}) },
-          reviews: { ...INITIAL_WEBSITE_CONTENT.reviews, ...(parsed.reviews || {}) },
-          contact: { ...INITIAL_WEBSITE_CONTENT.contact, ...(parsed.contact || {}) },
-          footer: { ...INITIAL_WEBSITE_CONTENT.footer, ...(parsed.footer || {}) },
-        };
+        return mergeWebsiteContent(JSON.parse(savedPub));
       }
     } catch (e) {
       console.warn('Error reading stored draft website content:', e);
@@ -829,21 +841,25 @@ export const RestaurantProvider: React.FC<{ children: React.ReactNode }> = ({ ch
       contentDocRef,
       (snap) => {
         if (snap.exists()) {
-          const remoteContent = snap.data() as WebsiteContent;
-          const merged: WebsiteContent = {
-            ...INITIAL_WEBSITE_CONTENT,
-            ...remoteContent,
-            header: { ...INITIAL_WEBSITE_CONTENT.header, ...(remoteContent.header || {}) },
-            home: { ...INITIAL_WEBSITE_CONTENT.home, ...(remoteContent.home || {}) },
-            about: { ...INITIAL_WEBSITE_CONTENT.about, ...(remoteContent.about || {}) },
-            videos: { ...INITIAL_WEBSITE_CONTENT.videos, ...(remoteContent.videos || {}) },
-            catering: { ...INITIAL_WEBSITE_CONTENT.catering, ...(remoteContent.catering || {}) },
-            specialOffers: { ...INITIAL_WEBSITE_CONTENT.specialOffers, ...(remoteContent.specialOffers || {}) },
-            reviews: { ...INITIAL_WEBSITE_CONTENT.reviews, ...(remoteContent.reviews || {}) },
-            contact: { ...INITIAL_WEBSITE_CONTENT.contact, ...(remoteContent.contact || {}) },
-            footer: { ...INITIAL_WEBSITE_CONTENT.footer, ...(remoteContent.footer || {}) },
-          };
+          const remoteContent = snap.data();
+          const merged = mergeWebsiteContent(remoteContent);
           setWebsiteContent(merged);
+          if (merged.branding) {
+            setSettings((prev) => ({
+              ...prev,
+              restaurantName: merged.branding.restaurantName || prev.restaurantName,
+              tagline: merged.branding.tagline || prev.tagline,
+              currencySymbol: merged.branding.currencySymbol || prev.currencySymbol,
+              defaultDeliveryFee:
+                typeof merged.branding.defaultDeliveryFee === 'number'
+                  ? merged.branding.defaultDeliveryFee
+                  : prev.defaultDeliveryFee,
+              taxRatePercentage:
+                typeof merged.branding.taxRatePercentage === 'number'
+                  ? merged.branding.taxRatePercentage
+                  : prev.taxRatePercentage,
+            }));
+          }
           try {
             localStorage.setItem('faminas_published_website_content_v1', JSON.stringify(merged));
           } catch {}
@@ -2468,6 +2484,22 @@ export const RestaurantProvider: React.FC<{ children: React.ReactNode }> = ({ ch
 
       setWebsiteContent(toPublish);
       setDraftWebsiteContent(toPublish);
+      if (toPublish.branding) {
+        setSettings((prev) => ({
+          ...prev,
+          restaurantName: toPublish.branding.restaurantName || prev.restaurantName,
+          tagline: toPublish.branding.tagline || prev.tagline,
+          currencySymbol: toPublish.branding.currencySymbol || prev.currencySymbol,
+          defaultDeliveryFee:
+            typeof toPublish.branding.defaultDeliveryFee === 'number'
+              ? toPublish.branding.defaultDeliveryFee
+              : prev.defaultDeliveryFee,
+          taxRatePercentage:
+            typeof toPublish.branding.taxRatePercentage === 'number'
+              ? toPublish.branding.taxRatePercentage
+              : prev.taxRatePercentage,
+        }));
+      }
       setIsContentDirty(false);
       notify('success', '🎉 Website content published! Live frontend updated instantly.');
     } catch (err) {

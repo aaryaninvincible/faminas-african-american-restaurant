@@ -108,3 +108,4 @@ echo json_encode([
     'filename' => $uniqueFilename,
     'provider' => 'hostinger_storage'
 ]);
+

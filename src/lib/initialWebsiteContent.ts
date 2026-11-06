@@ -1,6 +1,42 @@
 import { WebsiteContent } from '../types/restaurant';
 
 export const INITIAL_WEBSITE_CONTENT: WebsiteContent = {
+  branding: {
+    restaurantName: 'FAMINAS AFRICAN AND AMERICAN CUISINE',
+    restaurantShortName: 'FAMINAS',
+    tagline: 'Authentic Flavors. Fresh Ingredients. A Taste of Home.',
+    slogan: 'Good Food Brings People Together.',
+    currencySymbol: '$',
+    taxRatePercentage: 6.625,
+    defaultDeliveryFee: 4.99,
+    minimumOrderAmount: 15.00,
+    primaryColor: '#D4AF37',
+    secondaryColor: '#254B37',
+  },
+  sectionVisibility: {
+    announcementBar: true,
+    heroSlider: true,
+    welcomeSection: true,
+    promotionalBanners: true,
+    dailySpecials: true,
+    kitchenVideos: true,
+    whyChooseUs: true,
+    printMenuSheet: true,
+    customerReviews: true,
+    vipNewsletter: true,
+    mapAndLocation: true,
+  },
+  navigation: {
+    navLinks: [
+      { id: 'home', label: 'Home', isVisible: true },
+      { id: 'about', label: 'About Us', isVisible: true },
+      { id: 'menu', label: 'Our Menu', isVisible: true },
+      { id: 'ordering', label: 'Order Online', isVisible: true },
+      { id: 'gallery', label: 'Gallery', isVisible: true },
+      { id: 'catering', label: 'Catering', isVisible: true },
+      { id: 'contact', label: 'Contact Us', isVisible: true },
+    ],
+  },
   header: {
     announcementText: '✨ Authentic Sierra Leonean & American Cuisine in Lindenwold, NJ · Dine-In, Takeout & Fast Local Delivery!',
     announcementActive: true,
@@ -71,6 +107,44 @@ export const INITIAL_WEBSITE_CONTENT: WebsiteContent = {
         featuredDishIds: ['item-cheesesteak', 'item-cheeseburger'],
       },
     ],
+  },
+  whyChooseUs: {
+    badge: 'Five-Star Hospitality in South Jersey',
+    title: 'Why Guests Love Dining at FAMINAS',
+    description: 'Located at 577 Blackwood-Clementon Road, Lindenwold, NJ 08021, we bring together traditional West African culinary craftsmanship and classic American grilling in a welcoming, family-friendly setting.',
+    cards: [
+      {
+        id: 'feat-1',
+        number: '01',
+        title: 'Authentic Sierra Leonean Recipes',
+        description: 'True Freetown and West African preparation—from Cassava Leaf and Kran Kran Palava Sauce to Achecke with Grill Fish, Foofoo, and Pepper Soup.',
+      },
+      {
+        id: 'feat-2',
+        number: '02',
+        title: 'Something for Every Guest',
+        description: 'Bridge generations at one table with rich African leaf stews alongside classic American hamburgers, cheesesteaks, wings, and mac & cheese.',
+      },
+      {
+        id: 'feat-3',
+        number: '03',
+        title: 'Easy Online & WhatsApp Ordering',
+        description: 'Order directly through our website for pickup or delivery, or send an instant itemized order via WhatsApp to +1 (856) 522-3029.',
+      },
+      {
+        id: 'feat-4',
+        number: '04',
+        title: 'Freshly Prepared Generous Portions',
+        description: 'Every plate is cooked with fresh ingredients, whole grilled fish, tender meats, and vibrant spices—served clean and hot.',
+      },
+    ],
+  },
+  vipNewsletter: {
+    badge: 'VIP Guest Club · Daily Specials & Seasonal Offers',
+    title: "Receive Chef's Daily Specials & Catering Promotions",
+    description: 'Join our Lindenwold guest list to get notified when fresh batches of Achecke with Grill Fish, Cassava Leaf, Rice and Beans with Oxtail, and weekend family platters come out of the kitchen.',
+    buttonText: 'Join VIP Guest List',
+    disclaimer: 'We respect your privacy. Unsubscribe anytime.',
   },
   about: {
     title: 'Where Sierra Leonean Tradition Meets American Hospitality.',
@@ -192,7 +266,61 @@ export const INITIAL_WEBSITE_CONTENT: WebsiteContent = {
     promoCode: 'FAMINAS15',
     expiryDate: 'Ongoing Special',
     ctaText: 'Claim Discount & Order',
-    imageUrl: '/assets/food/catering_banquet.jpg',
+    imageUrl: '/assets/banners/faminas_feast_promo.jpg',
+    offersList: [
+      {
+        id: 'west-african-feast',
+        badge: 'Limited Time Online Exclusive',
+        title: 'The Grand West African Feast',
+        subtitle: 'Taste the vibrant culinary soul of Sierra Leone: Slow-simmered Cassava Leaf, smoky Jollof Rice with Stew, and grilled Dibi with sweet plantains.',
+        promoCode: 'FAMINAS15',
+        discountHighlight: '15% OFF Orders $60+',
+        image: '/assets/banners/faminas_feast_promo.jpg',
+        actionText: 'Claim 15% Off Feast',
+        targetPage: 'ordering',
+        accentColor: '#C9A45C',
+        secondaryText: 'Valid on direct online pickup & delivery orders.',
+      },
+      {
+        id: 'free-dodo-special',
+        badge: 'Chef’s Weekend Gift',
+        title: 'Free Sweet Fried Plantains',
+        subtitle: 'Order any two signature traditional platters (Jollof, Achecke, or Cassava Leaf) and enjoy complimentary caramelized golden sweet plantains on the house.',
+        promoCode: 'FREEDODO',
+        discountHighlight: 'FREE Portion with 2 Platters',
+        image: '/assets/menu_ref/plantain_sides.jpg',
+        actionText: 'Add to Order',
+        targetPage: 'ordering',
+        accentColor: '#E2BE76',
+        secondaryText: 'Freshly fried sweet yellow plantains ($5.99 value).',
+      },
+      {
+        id: 'american-favorites-combo',
+        badge: 'Signature American Duo',
+        title: 'Philly Cheesesteak & Wings Combo',
+        subtitle: 'Juicy ribeye cheesesteak with melted provolone & grilled peppers, paired with 6 crispy seasoned wings, golden fries, and artisanal house sauce.',
+        promoCode: 'COMBO20',
+        discountHighlight: 'Special $19.99 (Save $6)',
+        image: '/assets/banners/faminas_american_combo_promo.jpg',
+        actionText: 'Order Combo Now',
+        targetPage: 'ordering',
+        accentColor: '#F0AA59',
+        secondaryText: 'A favorite lunch and dinner comfort classic in Lindenwold.',
+      },
+      {
+        id: 'catering-family-platters',
+        badge: 'Catering & Gatherings',
+        title: 'Family Platters & Event Catering',
+        subtitle: 'Planning a wedding, birthday, church event, or company celebration? Save 10% on large catering trays with free delivery in Camden County.',
+        promoCode: 'CATER10',
+        discountHighlight: '10% OFF Catering Trays',
+        image: '/assets/menu_ref/lamb_grill_plantain.jpg',
+        actionText: 'Explore Catering',
+        targetPage: 'catering',
+        accentColor: '#254B37',
+        secondaryText: 'Feeds 15 to 250+ guests with authentic West African warmth.',
+      },
+    ],
   },
   reviews: {
     sectionTitle: 'What Our Guests Say',
@@ -259,6 +387,38 @@ export const INITIAL_WEBSITE_CONTENT: WebsiteContent = {
     instagramUrl: 'https://instagram.com/faminasrestaurant',
     tiktokUrl: 'https://tiktok.com/@faminasrestaurant',
     youtubeUrl: 'https://youtube.com/@faminasrestaurant',
+  },
+  legal: {
+    privacyPolicyTitle: 'Privacy Policy',
+    privacyPolicyContent: `At FAMINAS African and Americans Restaurant ("we", "us", or "our"), located at 577 Blackwood-Clementon Road, Lindenwold, NJ 08021, USA, we value your privacy and trust.
+
+### 1. Information We Collect
+When you order through our website or request catering services, we collect necessary contact information (name, phone number, email address, and delivery location).
+
+### 2. How We Use Your Information
+Your information is used strictly to prepare your orders, provide delivery updates, answer catering inquiries, and send occasional special promotions if you opt in.
+
+### 3. Payment Security
+Online payments are encrypted and processed through certified PCI-DSS compliant payment gateways. We never store full credit card numbers on our servers.
+
+### 4. Contact Us
+If you have any questions regarding this Privacy Policy, please call us at +1 (856) 522-3029 or email info@faminasrestaurant.com.`,
+    privacyLastUpdated: 'November 2026',
+    termsTitle: 'Terms & Conditions',
+    termsContent: `Welcome to FAMINAS African and Americans Restaurant. By using our website or ordering services, you agree to these Terms and Conditions.
+
+### 1. Orders and Fulfillment
+All food orders are prepared fresh upon confirmation. Pickup orders must be collected at 577 Blackwood-Clementon Road, Lindenwold, NJ 08021 during regular business hours. Delivery orders are subject to distance-based fulfillment zones.
+
+### 2. Pricing and Availability
+Menu items and prices are subject to seasonal availability and market conditions. We make every effort to display accurate pricing and descriptions.
+
+### 3. Cancellations & Refunds
+Because food is prepared to order, cancellations must be requested immediately by telephone at +1 (856) 522-3029 before our kitchen begins cooking.
+
+### 4. Governing Law
+These Terms are governed by the laws of the State of New Jersey, USA.`,
+    termsLastUpdated: 'November 2026',
   },
   lastPublishedAt: new Date().toISOString(),
   publishedBy: 'System Administrator',
