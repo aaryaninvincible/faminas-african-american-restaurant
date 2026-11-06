@@ -211,6 +211,7 @@ function FaminasPlatform() {
     updateItemPrice,
     heroSlides,
     subscribeNewsletter,
+    websiteContent,
   } = useRestaurant();
 
   const [currentPage, setCurrentPage] = useState<PageRoute>('home');
@@ -248,7 +249,12 @@ function FaminasPlatform() {
   // Automatic Homepage Hero Slider State (5-second interval)
   const [activeSlide, setActiveSlide] = useState(0);
   const [isSliderPaused, setIsSliderPaused] = useState(false);
-  const activeSlidesList = heroSlides.length > 0 ? heroSlides : HERO_SLIDES;
+  const activeSlidesList =
+    websiteContent?.home?.slides && websiteContent.home.slides.length > 0
+      ? websiteContent.home.slides
+      : heroSlides.length > 0
+      ? heroSlides
+      : HERO_SLIDES;
 
   useEffect(() => {
     if (currentPage !== 'home' || isSliderPaused) return;
@@ -603,23 +609,29 @@ function FaminasPlatform() {
       )}
 
       {/* TOP ANNOUNCEMENT PROMO TICKER */}
-      <div className="bg-gradient-to-r from-[#21150F] via-[#254B37] to-[#21150F] text-[#F7F3EA] border-b border-[#C9A45C]/40 py-1.5 px-4 text-center text-[11px] sm:text-xs font-medium tracking-wide flex items-center justify-center gap-2">
-        <Sparkles className="w-3.5 h-3.5 text-[#C9A45C] shrink-0 animate-pulse-subtle" />
-        <span>
-          <strong>SPECIAL PROMO:</strong> Get 15% OFF your order with code{' '}
-          <span className="font-mono font-bold text-[#C9A45C] bg-black/40 px-1.5 py-0.5 rounded border border-[#C9A45C]/50">
-            FAMINAS15
-          </span>{' '}
-          · Free Sweet Plantains with 2 Platters!
-        </span>
-        <button
-          type="button"
-          onClick={() => navigateTo('ordering')}
-          className="underline font-bold text-[#C9A45C] hover:text-[#FFFFFF] ml-1 transition-colors cursor-pointer"
-        >
-          Order Now →
-        </button>
-      </div>
+      {websiteContent?.header?.announcementActive !== false && (
+        <div className="bg-gradient-to-r from-[#21150F] via-[#254B37] to-[#21150F] text-[#F7F3EA] border-b border-[#C9A45C]/40 py-1.5 px-4 text-center text-[11px] sm:text-xs font-medium tracking-wide flex items-center justify-center gap-2">
+          <Sparkles className="w-3.5 h-3.5 text-[#C9A45C] shrink-0 animate-pulse-subtle" />
+          <span>
+            {websiteContent?.header?.announcementText || (
+              <>
+                <strong>SPECIAL PROMO:</strong> Get 15% OFF your order with code{' '}
+                <span className="font-mono font-bold text-[#C9A45C] bg-black/40 px-1.5 py-0.5 rounded border border-[#C9A45C]/50">
+                  FAMINAS15
+                </span>{' '}
+                · Free Sweet Plantains with 2 Platters!
+              </>
+            )}
+          </span>
+          <button
+            type="button"
+            onClick={() => navigateTo('ordering')}
+            className="underline font-bold text-[#C9A45C] hover:text-[#FFFFFF] ml-1 transition-colors cursor-pointer"
+          >
+            Order Now →
+          </button>
+        </div>
+      )}
 
       {/* 1. ELEGANT FIVE-STAR NAVIGATION HEADER (#21150F ESPRESSO BROWN WITH TRANSLUCENT GLASS) */}
       <header className="sticky top-0 z-40 faminas-glass-dark border-b border-[#C9A45C]/40 shadow-[0_10px_35px_rgba(0,0,0,0.4)]">
@@ -727,18 +739,18 @@ function FaminasPlatform() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-2 flex flex-wrap items-center justify-between gap-4">
           <div className="flex flex-wrap items-center gap-3 text-[#F7F3EA]/90">
             <span className="text-[#C9A45C] font-semibold">
-              577 Blackwood-Clementon Road, Lindenwold, NJ 08021, USA
+              {websiteContent?.contact?.address || '577 Blackwood-Clementon Road, Lindenwold, NJ 08021, USA'}
             </span>
             <span aria-hidden="true">·</span>
             <a
-              href="tel:+18565223029"
+              href={`tel:${(websiteContent?.contact?.phone || '+1 (856) 522-3029').replace(/[^0-9+]/g, '')}`}
               className="hover:text-[#C9A45C] transition-colors font-mono font-bold text-[#FFFFFF]"
             >
-              +1 (856) 522-3029
+              {websiteContent?.contact?.phone || '+1 (856) 522-3029'}
             </a>
             <span aria-hidden="true">·</span>
             <span className="text-[#F7F3EA]/80 hidden sm:inline">
-              Good Food Brings People Together.
+              {websiteContent?.home?.heroTagline || 'Good Food Brings People Together.'}
             </span>
           </div>
 
@@ -875,13 +887,13 @@ function FaminasPlatform() {
 
                       <div className="space-y-2.5">
                         <h1 className="font-serif-display text-3xl sm:text-5xl lg:text-6xl font-bold text-[#FFFFFF] tracking-tight leading-[1.08] drop-shadow-md">
-                          FAMINAS AFRICAN AND AMERICAN CUISINE
+                          {websiteContent?.home?.heroTitle || 'FAMINAS AFRICAN AND AMERICAN CUISINE'}
                         </h1>
                         <p className="font-serif-display text-xl sm:text-2xl text-[#C9A45C] font-semibold">
-                          Authentic Flavors. Fresh Ingredients. A Taste of Home.
+                          {websiteContent?.home?.heroSubtitle || 'Authentic Flavors. Fresh Ingredients. A Taste of Home.'}
                         </p>
                         <p className="text-sm sm:text-base font-semibold text-[#F7F3EA]/90 tracking-wide">
-                          Good Food Brings People Together.
+                          {websiteContent?.home?.heroTagline || 'Good Food Brings People Together.'}
                         </p>
                       </div>
 
@@ -911,7 +923,7 @@ function FaminasPlatform() {
                           className="btn-sheen inline-flex items-center justify-center gap-2.5 px-8 py-4 rounded-2xl bg-gradient-to-r from-[#C9A45C] via-[#E2BE76] to-[#C9A45C] hover:bg-[#B89146] text-[#21150F] font-extrabold text-xs sm:text-sm uppercase tracking-wider shadow-[0_14px_35px_rgba(201,164,92,0.45)] transition-all duration-300 hover:-translate-y-1 hover:scale-[1.02] cursor-pointer"
                         >
                           <Utensils className="w-4 h-4" />
-                          <span>Explore Our Menu</span>
+                          <span>{websiteContent?.home?.exploreMenuBtnText || 'Explore Our Menu'}</span>
                         </button>
 
                         <button
@@ -920,7 +932,7 @@ function FaminasPlatform() {
                           className="btn-sheen inline-flex items-center justify-center gap-2.5 px-8 py-4 rounded-2xl bg-gradient-to-r from-[#254B37] to-[#1A3828] text-[#FFFFFF] border-2 border-[#C9A45C]/80 font-bold text-xs sm:text-sm uppercase tracking-wider transition-all duration-300 hover:-translate-y-1 hover:scale-[1.02] hover:shadow-[0_14px_35px_rgba(37,75,55,0.5)] cursor-pointer"
                         >
                           <ShoppingBag className="w-4 h-4 text-[#C9A45C]" />
-                          <span>Order Online</span>
+                          <span>{websiteContent?.home?.orderOnlineBtnText || 'Order Online'}</span>
                           <ArrowRight className="w-4 h-4 text-[#C9A45C]" />
                         </button>
                       </div>
@@ -1046,17 +1058,21 @@ function FaminasPlatform() {
                 <div className="p-7 sm:p-10 rounded-3xl faminas-glass-light-card border border-[#C9A45C]/55 shadow-[0_16px_45px_rgba(33,21,15,0.08)] grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
                   <div className="lg:col-span-8 space-y-3">
                     <span className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#254B37]/10 border border-[#254B37]/35 text-[#254B37] text-xs font-bold uppercase tracking-widest">
-                      Welcome to Faminas · Lindenwold, New Jersey
+                      {websiteContent?.home?.heroBadge || 'Welcome to Faminas · Lindenwold, New Jersey'}
                     </span>
                     <h2 className="font-serif-display text-3xl sm:text-4xl font-bold text-[#21150F]">
-                      Good Food Brings People Together.
+                      {websiteContent?.home?.welcomeHeading || 'Good Food Brings People Together.'}
                     </h2>
                     <p className="text-sm sm:text-base text-[#3B3029] leading-relaxed">
-                      Welcome to <strong>FAMINAS African and Americans Restaurant</strong> at{' '}
-                      <strong>577 Blackwood-Clementon Road, Lindenwold, NJ 08021</strong>. We take
-                      pride in preparing authentic Sierra Leonean and West African home-cooked
-                      traditions alongside beloved American comfort dishes—crafted fresh daily with
-                      warm hospitality for Dine-In, Takeout, Delivery, and Private Event Catering.
+                      {websiteContent?.home?.welcomeText || (
+                        <>
+                          Welcome to <strong>FAMINAS African and Americans Restaurant</strong> at{' '}
+                          <strong>577 Blackwood-Clementon Road, Lindenwold, NJ 08021</strong>. We take
+                          pride in preparing authentic Sierra Leonean and West African home-cooked
+                          traditions alongside beloved American comfort dishes—crafted fresh daily with
+                          warm hospitality for Dine-In, Takeout, Delivery, and Private Event Catering.
+                        </>
+                      )}
                     </p>
                   </div>
                   <div className="lg:col-span-4 flex flex-col sm:flex-row lg:flex-col gap-3 justify-end">
@@ -1647,18 +1663,82 @@ function FaminasPlatform() {
                 <FaminasLogo size="lg" />
               </div>
               <span className="text-xs uppercase tracking-widest text-[#C9A45C] font-bold block">
-                About Faminas African and Americans Restaurant · Lindenwold, New Jersey
+                {websiteContent?.about?.subtitle || 'About Faminas African and Americans Restaurant · Lindenwold, New Jersey'}
               </span>
               <h1 className="font-serif-display text-3xl md:text-5xl font-bold text-[#FFFFFF]">
-                Where Sierra Leonean Tradition Meets American Hospitality.
+                {websiteContent?.about?.title || 'Where Sierra Leonean Tradition Meets American Hospitality.'}
               </h1>
               <p className="text-sm sm:text-base text-[#F7F3EA]/85 leading-relaxed">
-                At FAMINAS African and Americans Restaurant (`577 Blackwood-Clementon Road,
-                Lindenwold, NJ 08021`), we celebrate the rich culinary tapestry of West
-                Africa—especially the treasured home-cooked dishes of Sierra Leone—alongside beloved
-                American classics.
+                {websiteContent?.about?.storyParagraph1 ||
+                  'At FAMINAS African and Americans Restaurant (577 Blackwood-Clementon Road, Lindenwold, NJ 08021), we celebrate the rich culinary tapestry of West Africa—especially the treasured home-cooked dishes of Sierra Leone—alongside beloved American classics.'}
               </p>
+              {websiteContent?.about?.storyParagraph2 && (
+                <p className="text-sm sm:text-base text-[#F7F3EA]/85 leading-relaxed pt-2 border-t border-white/10">
+                  {websiteContent.about.storyParagraph2}
+                </p>
+              )}
+              {websiteContent?.about?.storyParagraph3 && (
+                <p className="text-sm sm:text-base text-[#F7F3EA]/80 leading-relaxed italic">
+                  {websiteContent.about.storyParagraph3}
+                </p>
+              )}
             </div>
+
+            {/* Founder Profile & Culinary Tradition Card */}
+            {websiteContent?.about?.founderName && (
+              <div className="p-8 bg-[#FFFFFF] border-2 border-[#C9A45C]/60 rounded-2xl shadow-md grid grid-cols-1 md:grid-cols-12 gap-8 items-center">
+                <div className="md:col-span-4">
+                  <div className="h-64 rounded-xl overflow-hidden border-2 border-[#C9A45C] shadow-lg">
+                    <img
+                      src={websiteContent.about.founderImage || '/assets/faminas_ceo_haja_yeabu_fofana.jpg'}
+                      alt={websiteContent.about.founderName}
+                      className="w-full h-full object-cover"
+                      onError={(e) => {
+                        (e.target as HTMLImageElement).src = '/assets/faminas_ceo_haja_yeabu_fofana.jpg';
+                      }}
+                    />
+                  </div>
+                </div>
+                <div className="md:col-span-8 space-y-3">
+                  <span className="text-xs font-bold uppercase tracking-wider text-[#254B37] bg-[#254B37]/10 px-3 py-1 rounded-full">
+                    {websiteContent.about.founderRole || 'Founder & Head Chef'}
+                  </span>
+                  <h2 className="font-serif-display text-3xl font-bold text-[#21150F]">
+                    {websiteContent.about.founderName}
+                  </h2>
+                  <p className="text-sm text-[#3B3029] leading-relaxed">
+                    {websiteContent.about.founderBio}
+                  </p>
+                  {websiteContent.about.culinaryTraditionTitle && (
+                    <div className="pt-3 border-t border-[#C9A45C]/30 space-y-1">
+                      <h4 className="text-xs font-bold uppercase tracking-wider text-[#C9A45C]">
+                        {websiteContent.about.culinaryTraditionTitle}
+                      </h4>
+                      <p className="text-xs text-[#3B3029]/80">
+                        {websiteContent.about.culinaryTraditionText}
+                      </p>
+                    </div>
+                  )}
+                </div>
+              </div>
+            )}
+
+            {/* Achievement Statistics */}
+            {websiteContent?.about?.stats && websiteContent.about.stats.length > 0 && (
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+                {websiteContent.about.stats.map((st, sIdx) => (
+                  <div
+                    key={sIdx}
+                    className="p-5 rounded-2xl bg-[#21150F] border border-[#C9A45C]/50 text-center space-y-1 shadow-sm"
+                  >
+                    <p className="font-serif-display text-2xl sm:text-3xl font-bold text-[#D4AF37]">
+                      {st.value}
+                    </p>
+                    <p className="text-xs text-[#F7F2EB]/70 font-semibold">{st.label}</p>
+                  </div>
+                ))}
+              </div>
+            )}
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
               <div className="p-7 bg-[#FFFFFF] border border-[#C9A45C]/50 rounded-2xl shadow-sm space-y-3">
@@ -2425,21 +2505,76 @@ function FaminasPlatform() {
             PAGE 7: CATERING AND EVENTS
             ========================================================= */}
         {currentPage === 'catering' && (
-          <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-12 space-y-10">
+          <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-12 space-y-12">
             <div className="space-y-3">
               <span className="text-xs uppercase tracking-widest text-[#254B37] font-bold">
-                Private Events · Weddings · Corporate Banquets
+                {websiteContent?.catering?.heroSubtitle || 'Private Events · Weddings · Corporate Banquets'}
               </span>
               <h1 className="font-serif-display text-4xl font-bold text-[#21150F]">
-                Catering &amp; Special Events
+                {websiteContent?.catering?.heroTitle || 'Catering & Special Events'}
               </h1>
               <p className="text-sm md:text-base text-[#3B3029] max-w-2xl leading-relaxed">
-                Treat your guests to an unforgettable spread of Sierra Leonean Jollof Rice,
-                Cassava Leaves, Fried Red Snapper, Peppered Goat Meat, and American crowd-pleasers.
+                {websiteContent?.catering?.description ||
+                  'Treat your guests to an unforgettable spread of Sierra Leonean Jollof Rice, Cassava Leaves, Fried Red Snapper, Peppered Goat Meat, and American crowd-pleasers.'}
               </p>
             </div>
 
+            {/* Dynamic Catering Packages Grid */}
+            {websiteContent?.catering?.packages && websiteContent.catering.packages.length > 0 && (
+              <div className="space-y-4">
+                <h2 className="font-serif-display text-2xl font-bold text-[#21150F]">
+                  Curated Catering Feast Packages
+                </h2>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                  {websiteContent.catering.packages.map((pkg) => (
+                    <div
+                      key={pkg.id}
+                      className="p-6 rounded-2xl bg-[#FFFFFF] border-2 border-[#C9A45C]/50 shadow-md flex flex-col justify-between space-y-4 relative"
+                    >
+                      {pkg.badge && (
+                        <span className="absolute -top-3 right-4 px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider bg-[#254B37] text-[#FFFFFF] shadow-sm">
+                          {pkg.badge}
+                        </span>
+                      )}
+                      <div className="space-y-2">
+                        <h3 className="font-serif-display text-xl font-bold text-[#21150F]">
+                          {pkg.name}
+                        </h3>
+                        <p className="font-mono text-2xl font-extrabold text-[#C9A45C]">
+                          ${pkg.pricePerPerson.toFixed(2)}{' '}
+                          <span className="text-xs text-[#3B3029]/70 font-sans font-normal">/ guest</span>
+                        </p>
+                        <p className="text-xs text-[#3B3029] leading-relaxed">
+                          {pkg.description}
+                        </p>
+                        <div className="pt-3 border-t border-[#C9A45C]/25 space-y-1.5">
+                          {pkg.features.map((feat, fIdx) => (
+                            <div key={fIdx} className="flex items-start gap-2 text-xs text-[#21150F]">
+                              <CheckCircle2 className="w-3.5 h-3.5 text-[#254B37] shrink-0 mt-0.5" />
+                              <span>{feat}</span>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setCatFoodPrefs(`Package Selection: ${pkg.name} ($${pkg.pricePerPerson}/person)`);
+                          const formEl = document.getElementById('cateringQuoteForm');
+                          if (formEl) formEl.scrollIntoView({ behavior: 'smooth' });
+                        }}
+                        className="w-full py-2.5 rounded-xl bg-[#21150F] hover:bg-[#341F14] text-[#F7F3EA] text-xs font-bold uppercase tracking-wider transition-colors cursor-pointer"
+                      >
+                        Select This Package
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
             <form
+              id="cateringQuoteForm"
               onSubmit={async (e) => {
                 e.preventDefault();
                 if (!user) {
@@ -2597,10 +2732,10 @@ function FaminasPlatform() {
             <div className="space-y-6">
               <div>
                 <span className="text-xs uppercase tracking-widest text-[#254B37] font-bold">
-                  Visit or Reach Out
+                  {websiteContent?.contact?.subheading || 'Visit or Reach Out'}
                 </span>
                 <h1 className="font-serif-display text-4xl font-bold text-[#21150F] mt-1">
-                  Contact Faminas Restaurant
+                  {websiteContent?.contact?.heading || 'Contact Faminas Restaurant'}
                 </h1>
               </div>
 
@@ -2609,7 +2744,9 @@ function FaminasPlatform() {
                   <MapPin className="w-5 h-5 text-[#254B37] shrink-0 mt-0.5" />
                   <div>
                     <h3 className="text-sm font-bold text-[#21150F]">Restaurant Address</h3>
-                    <p className="text-xs text-[#3B3029] mt-0.5">{settings.address}</p>
+                    <p className="text-xs text-[#3B3029] mt-0.5">
+                      {websiteContent?.contact?.address || settings.address}
+                    </p>
                   </div>
                 </div>
                 <div className="flex items-start gap-3">
@@ -2618,9 +2755,17 @@ function FaminasPlatform() {
                     <h3 className="text-sm font-bold text-[#21150F]">Phone &amp; WhatsApp</h3>
                     <p className="text-xs text-[#3B3029] mt-0.5">
                       Phone:{' '}
-                      <a href="tel:+18565223029" className="text-[#21150F] font-bold hover:text-[#254B37] hover:underline font-mono">
-                        +1 (856) 522-3029
+                      <a
+                        href={`tel:${(websiteContent?.contact?.phone || settings.phone).replace(/[^0-9+]/g, '')}`}
+                        className="text-[#21150F] font-bold hover:text-[#254B37] hover:underline font-mono"
+                      >
+                        {websiteContent?.contact?.phone || settings.phone}
                       </a>
+                      {websiteContent?.contact?.whatsappNumber && (
+                        <span className="ml-3 text-[#254B37] font-semibold">
+                          · WhatsApp: {websiteContent.contact.whatsappNumber}
+                        </span>
+                      )}
                     </p>
                   </div>
                 </div>
@@ -2629,18 +2774,45 @@ function FaminasPlatform() {
                   <div>
                     <h3 className="text-sm font-bold text-[#21150F]">Website &amp; Email</h3>
                     <p className="text-xs text-[#3B3029] mt-0.5">
-                      faminasrestaurant.com · {settings.email}
+                      faminasrestaurant.com · {websiteContent?.contact?.email || settings.email}
                     </p>
                   </div>
                 </div>
                 <div className="flex items-start gap-3">
                   <Clock className="w-5 h-5 text-[#254B37] shrink-0 mt-0.5" />
-                  <div>
-                    <h3 className="text-sm font-bold text-[#21150F]">Dining &amp; Takeout Hours</h3>
-                    <p className="text-xs text-[#3B3029] mt-0.5">{settings.openingHours}</p>
+                  <div className="w-full">
+                    <h3 className="text-sm font-bold text-[#21150F] mb-1">Dining &amp; Takeout Hours</h3>
+                    {websiteContent?.contact?.openingHours && websiteContent.contact.openingHours.length > 0 ? (
+                      <div className="space-y-1 text-xs text-[#3B3029]">
+                        {websiteContent.contact.openingHours.map((oh, oIdx) => (
+                          <div key={oIdx} className="flex justify-between max-w-xs">
+                            <span className="font-medium">{oh.days}:</span>
+                            <span className="font-mono">{oh.hours}</span>
+                          </div>
+                        ))}
+                      </div>
+                    ) : (
+                      <p className="text-xs text-[#3B3029] mt-0.5">{settings.openingHours}</p>
+                    )}
                   </div>
                 </div>
               </div>
+
+              {/* Interactive Google Maps Embed */}
+              {websiteContent?.contact?.googleMapsEmbedUrl && (
+                <div className="rounded-2xl overflow-hidden border border-[#C9A45C]/45 shadow-md h-64">
+                  <iframe
+                    src={websiteContent.contact.googleMapsEmbedUrl}
+                    width="100%"
+                    height="100%"
+                    style={{ border: 0 }}
+                    allowFullScreen={false}
+                    loading="lazy"
+                    referrerPolicy="no-referrer-when-downgrade"
+                    title="Faminas Restaurant Map Location"
+                  />
+                </div>
+              )}
             </div>
 
             {/* Verified Guest Review Form */}
@@ -3657,7 +3829,9 @@ function FaminasPlatform() {
         {/* =========================================================
             ADMIN DASHBOARD
             ========================================================= */}
-        {currentPage === 'admin' && <AdminDashboard />}
+        {currentPage === 'admin' && (
+          <AdminDashboard onPreviewWebsite={() => navigateTo('home')} />
+        )}
 
         {/* =========================================================
             PAGE 12: PRIVACY POLICY
@@ -3759,8 +3933,52 @@ function FaminasPlatform() {
           <div className="space-y-3">
             <FaminasLogo size="md" />
             <p className="text-xs text-[#F7F3EA]/80 leading-relaxed">
-              FAMINAS AFRICAN AND AMERICANS RESTAURANT — GOOD FOOD BRINGS PEOPLE TOGETHER.
+              {websiteContent?.footer?.aboutText ||
+                'FAMINAS AFRICAN AND AMERICANS RESTAURANT — GOOD FOOD BRINGS PEOPLE TOGETHER.'}
             </p>
+            {/* Social Media Links */}
+            <div className="flex items-center gap-3 pt-2">
+              {websiteContent?.footer?.facebookUrl && (
+                <a
+                  href={websiteContent.footer.facebookUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="px-2.5 py-1 rounded bg-black/40 text-xs text-[#C9A45C] hover:text-[#FFFFFF] border border-[#C9A45C]/30"
+                >
+                  Facebook
+                </a>
+              )}
+              {websiteContent?.footer?.instagramUrl && (
+                <a
+                  href={websiteContent.footer.instagramUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="px-2.5 py-1 rounded bg-black/40 text-xs text-[#C9A45C] hover:text-[#FFFFFF] border border-[#C9A45C]/30"
+                >
+                  Instagram
+                </a>
+              )}
+              {websiteContent?.footer?.tiktokUrl && (
+                <a
+                  href={websiteContent.footer.tiktokUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="px-2.5 py-1 rounded bg-black/40 text-xs text-[#C9A45C] hover:text-[#FFFFFF] border border-[#C9A45C]/30"
+                >
+                  TikTok
+                </a>
+              )}
+              {websiteContent?.footer?.youtubeUrl && (
+                <a
+                  href={websiteContent.footer.youtubeUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="px-2.5 py-1 rounded bg-black/40 text-xs text-[#C9A45C] hover:text-[#FFFFFF] border border-[#C9A45C]/30"
+                >
+                  YouTube
+                </a>
+              )}
+            </div>
           </div>
 
           <div>
@@ -3873,9 +4091,13 @@ function FaminasPlatform() {
         </div>
 
         <div className="border-t border-[#C9A45C]/25 py-5 text-center text-xs text-[#F7F3EA]/60">
-          © {new Date().getFullYear()} FAMINAS AFRICAN AND AMERICANS RESTAURANT ·
-          faminasrestaurant.com · 577 Blackwood-Clementon Road, Lindenwold, NJ 08021, USA · Phone:
-          +1 (856) 522-3029 · Indexed for Google Search &amp; Google Merchant Center
+          {websiteContent?.footer?.copyrightText || (
+            <>
+              © {new Date().getFullYear()} FAMINAS AFRICAN AND AMERICANS RESTAURANT ·
+              faminasrestaurant.com · 577 Blackwood-Clementon Road, Lindenwold, NJ 08021, USA · Phone:
+              +1 (856) 522-3029 · Indexed for Google Search &amp; Google Merchant Center
+            </>
+          )}
         </div>
       </footer>
     </div>

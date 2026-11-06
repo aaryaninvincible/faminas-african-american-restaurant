@@ -328,3 +328,158 @@ export interface NewsletterSubscriber {
 
 
 
+
+
+export interface WebsiteHeaderContent {
+  announcementText: string;
+  announcementActive: boolean;
+  announcementLink: string;
+  logoUrl: string;
+  phone: string;
+  addressShort: string;
+}
+
+export interface WebsiteHomeContent {
+  heroTitle: string;
+  heroSubtitle: string;
+  heroTagline: string;
+  heroBadge: string;
+  exploreMenuBtnText: string;
+  orderOnlineBtnText: string;
+  welcomeHeading: string;
+  welcomeText: string;
+  featuredDishesTitle: string;
+  slides: HeroSlideConfig[];
+}
+
+export interface WebsiteAboutStat {
+  label: string;
+  value: string;
+}
+
+export interface WebsiteAboutContent {
+  title: string;
+  subtitle: string;
+  storyParagraph1: string;
+  storyParagraph2: string;
+  storyParagraph3: string;
+  founderName: string;
+  founderRole: string;
+  founderBio: string;
+  founderImage: string;
+  culinaryTraditionTitle: string;
+  culinaryTraditionText: string;
+  stats: WebsiteAboutStat[];
+}
+
+export interface WebsiteVideoItem {
+  id: string;
+  title: string;
+  description: string;
+  videoUrl: string;
+  thumbnailUrl: string;
+  duration: string;
+  isFeatured: boolean;
+}
+
+export interface WebsiteVideosContent {
+  title: string;
+  subtitle: string;
+  videoItems: WebsiteVideoItem[];
+}
+
+export interface WebsiteCateringPackage {
+  id: string;
+  name: string;
+  pricePerPerson: number;
+  description: string;
+  features: string[];
+  badge?: string;
+}
+
+export interface WebsiteCateringContent {
+  heroTitle: string;
+  heroSubtitle: string;
+  description: string;
+  minGuests: number;
+  packages: WebsiteCateringPackage[];
+}
+
+export interface WebsiteSpecialOffersContent {
+  active: boolean;
+  bannerTitle: string;
+  bannerSubtitle: string;
+  discountPercentage: number;
+  promoCode: string;
+  expiryDate: string;
+  ctaText: string;
+  imageUrl: string;
+}
+
+export interface WebsiteReviewItem {
+  id: string;
+  authorUid?: string;
+  authorName: string;
+  dishOrdered: string;
+  rating: number;
+  comment: string;
+  isApproved: boolean;
+}
+
+export interface WebsiteReviewsContent {
+  sectionTitle: string;
+  sectionSubtitle: string;
+  googleRating: number;
+  totalReviewsCount: number;
+  items: WebsiteReviewItem[];
+}
+
+export interface WebsiteOpeningHour {
+  days: string;
+  hours: string;
+}
+
+export interface WebsiteContactContent {
+  heading: string;
+  subheading: string;
+  address: string;
+  phone: string;
+  whatsappNumber: string;
+  email: string;
+  openingHours: WebsiteOpeningHour[];
+  googleMapsEmbedUrl: string;
+}
+
+export interface WebsiteFooterContent {
+  aboutText: string;
+  copyrightText: string;
+  facebookUrl: string;
+  instagramUrl: string;
+  tiktokUrl: string;
+  youtubeUrl: string;
+}
+
+export interface WebsiteContent {
+  header: WebsiteHeaderContent;
+  home: WebsiteHomeContent;
+  about: WebsiteAboutContent;
+  videos: WebsiteVideosContent;
+  catering: WebsiteCateringContent;
+  specialOffers: WebsiteSpecialOffersContent;
+  reviews: WebsiteReviewsContent;
+  contact: WebsiteContactContent;
+  footer: WebsiteFooterContent;
+  lastPublishedAt?: string;
+  publishedBy?: string;
+}
+
+export type SectionKey =
+  | 'header'
+  | 'home'
+  | 'about'
+  | 'videos'
+  | 'catering'
+  | 'specialOffers'
+  | 'reviews'
+  | 'contact'
+  | 'footer';

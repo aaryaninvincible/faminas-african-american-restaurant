@@ -52,7 +52,10 @@ import {
   ProviderStatusSummary,
   HeroSlideConfig,
   NewsletterSubscriber,
+  WebsiteContent,
+  SectionKey,
 } from '../types/restaurant';
+import { INITIAL_WEBSITE_CONTENT } from '../lib/initialWebsiteContent';
 import {
   DEFAULT_RESTAURANT_SETTINGS,
   INITIAL_CATEGORIES,
@@ -269,6 +272,20 @@ interface RestaurantContextValue {
     phone: string;
     consented: boolean;
   }) => void;
+  // Dynamic Website CMS & Content Management
+  websiteContent: WebsiteContent;
+  draftWebsiteContent: WebsiteContent;
+  isContentDirty: boolean;
+  updateDraftSection: <K extends SectionKey>(section: K, data: WebsiteContent[K]) => void;
+  updateDraftField: <K extends SectionKey, F extends keyof WebsiteContent[K]>(
+    section: K,
+    field: F,
+    value: WebsiteContent[K][F]
+  ) => void;
+  publishWebsiteContent: () => Promise<void>;
+  discardDraft: () => void;
+  resetWebsiteContentToDefault: () => Promise<void>;
+  uploadMedia: (file: File, folder?: string) => Promise<string>;
 }
 
 const RestaurantContext = createContext<RestaurantContextValue | undefined>(undefined);
@@ -353,6 +370,76 @@ export const RestaurantProvider: React.FC<{ children: React.ReactNode }> = ({ ch
       return [];
     }
   });
+
+  // Website CMS Content States (Live Published vs Draft)
+  const [websiteContent, setWebsiteContent] = useState<WebsiteContent>(() => {
+    try {
+      const saved = localStorage.getItem('faminas_published_website_content_v1');
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        return {
+          ...INITIAL_WEBSITE_CONTENT,
+          ...parsed,
+          header: { ...INITIAL_WEBSITE_CONTENT.header, ...(parsed.header || {}) },
+          home: { ...INITIAL_WEBSITE_CONTENT.home, ...(parsed.home || {}) },
+          about: { ...INITIAL_WEBSITE_CONTENT.about, ...(parsed.about || {}) },
+          videos: { ...INITIAL_WEBSITE_CONTENT.videos, ...(parsed.videos || {}) },
+          catering: { ...INITIAL_WEBSITE_CONTENT.catering, ...(parsed.catering || {}) },
+          specialOffers: { ...INITIAL_WEBSITE_CONTENT.specialOffers, ...(parsed.specialOffers || {}) },
+          reviews: { ...INITIAL_WEBSITE_CONTENT.reviews, ...(parsed.reviews || {}) },
+          contact: { ...INITIAL_WEBSITE_CONTENT.contact, ...(parsed.contact || {}) },
+          footer: { ...INITIAL_WEBSITE_CONTENT.footer, ...(parsed.footer || {}) },
+        };
+      }
+    } catch (e) {
+      console.warn('Error reading stored published website content:', e);
+    }
+    return INITIAL_WEBSITE_CONTENT;
+  });
+
+  const [draftWebsiteContent, setDraftWebsiteContent] = useState<WebsiteContent>(() => {
+    try {
+      const savedDraft = localStorage.getItem('faminas_draft_website_content_v1');
+      if (savedDraft) {
+        const parsed = JSON.parse(savedDraft);
+        return {
+          ...INITIAL_WEBSITE_CONTENT,
+          ...parsed,
+          header: { ...INITIAL_WEBSITE_CONTENT.header, ...(parsed.header || {}) },
+          home: { ...INITIAL_WEBSITE_CONTENT.home, ...(parsed.home || {}) },
+          about: { ...INITIAL_WEBSITE_CONTENT.about, ...(parsed.about || {}) },
+          videos: { ...INITIAL_WEBSITE_CONTENT.videos, ...(parsed.videos || {}) },
+          catering: { ...INITIAL_WEBSITE_CONTENT.catering, ...(parsed.catering || {}) },
+          specialOffers: { ...INITIAL_WEBSITE_CONTENT.specialOffers, ...(parsed.specialOffers || {}) },
+          reviews: { ...INITIAL_WEBSITE_CONTENT.reviews, ...(parsed.reviews || {}) },
+          contact: { ...INITIAL_WEBSITE_CONTENT.contact, ...(parsed.contact || {}) },
+          footer: { ...INITIAL_WEBSITE_CONTENT.footer, ...(parsed.footer || {}) },
+        };
+      }
+      const savedPub = localStorage.getItem('faminas_published_website_content_v1');
+      if (savedPub) {
+        const parsed = JSON.parse(savedPub);
+        return {
+          ...INITIAL_WEBSITE_CONTENT,
+          ...parsed,
+          header: { ...INITIAL_WEBSITE_CONTENT.header, ...(parsed.header || {}) },
+          home: { ...INITIAL_WEBSITE_CONTENT.home, ...(parsed.home || {}) },
+          about: { ...INITIAL_WEBSITE_CONTENT.about, ...(parsed.about || {}) },
+          videos: { ...INITIAL_WEBSITE_CONTENT.videos, ...(parsed.videos || {}) },
+          catering: { ...INITIAL_WEBSITE_CONTENT.catering, ...(parsed.catering || {}) },
+          specialOffers: { ...INITIAL_WEBSITE_CONTENT.specialOffers, ...(parsed.specialOffers || {}) },
+          reviews: { ...INITIAL_WEBSITE_CONTENT.reviews, ...(parsed.reviews || {}) },
+          contact: { ...INITIAL_WEBSITE_CONTENT.contact, ...(parsed.contact || {}) },
+          footer: { ...INITIAL_WEBSITE_CONTENT.footer, ...(parsed.footer || {}) },
+        };
+      }
+    } catch (e) {
+      console.warn('Error reading stored draft website content:', e);
+    }
+    return INITIAL_WEBSITE_CONTENT;
+  });
+
+  const [isContentDirty, setIsContentDirty] = useState<boolean>(false);
 
   const [cart, setCart] = useState<CartItem[]>([]);
   const [favouriteIds, setFavouriteIds] = useState<string[]>([]);
@@ -734,6 +821,40 @@ export const RestaurantProvider: React.FC<{ children: React.ReactNode }> = ({ ch
       unsubTestimonials();
     };
   }, [isAdmin]);
+
+  // Real-time synchronization for Website CMS Content
+  useEffect(() => {
+    const contentDocRef = doc(db, 'restaurant_settings', 'website_content');
+    const unsub = onSnapshot(
+      contentDocRef,
+      (snap) => {
+        if (snap.exists()) {
+          const remoteContent = snap.data() as WebsiteContent;
+          const merged: WebsiteContent = {
+            ...INITIAL_WEBSITE_CONTENT,
+            ...remoteContent,
+            header: { ...INITIAL_WEBSITE_CONTENT.header, ...(remoteContent.header || {}) },
+            home: { ...INITIAL_WEBSITE_CONTENT.home, ...(remoteContent.home || {}) },
+            about: { ...INITIAL_WEBSITE_CONTENT.about, ...(remoteContent.about || {}) },
+            videos: { ...INITIAL_WEBSITE_CONTENT.videos, ...(remoteContent.videos || {}) },
+            catering: { ...INITIAL_WEBSITE_CONTENT.catering, ...(remoteContent.catering || {}) },
+            specialOffers: { ...INITIAL_WEBSITE_CONTENT.specialOffers, ...(remoteContent.specialOffers || {}) },
+            reviews: { ...INITIAL_WEBSITE_CONTENT.reviews, ...(remoteContent.reviews || {}) },
+            contact: { ...INITIAL_WEBSITE_CONTENT.contact, ...(remoteContent.contact || {}) },
+            footer: { ...INITIAL_WEBSITE_CONTENT.footer, ...(remoteContent.footer || {}) },
+          };
+          setWebsiteContent(merged);
+          try {
+            localStorage.setItem('faminas_published_website_content_v1', JSON.stringify(merged));
+          } catch {}
+        }
+      },
+      (err) => {
+        console.debug('Website content real-time listener notice:', err.message);
+      }
+    );
+    return () => unsub();
+  }, []);
 
   const extractOrderTimestampMs = (ord: Order): number => {
     const ca: any = ord.createdAt;
@@ -2266,6 +2387,155 @@ export const RestaurantProvider: React.FC<{ children: React.ReactNode }> = ({ ch
     );
   };
 
+  // CMS Content Management Implementations
+  const updateDraftSection = useCallback(
+    <K extends SectionKey>(section: K, data: WebsiteContent[K]) => {
+      setDraftWebsiteContent((prev) => {
+        const updated: WebsiteContent = {
+          ...prev,
+          [section]: data,
+        };
+        try {
+          localStorage.setItem('faminas_draft_website_content_v1', JSON.stringify(updated));
+        } catch (err) {
+          console.error('Failed to cache draft:', err);
+        }
+        setIsContentDirty(true);
+        return updated;
+      });
+    },
+    []
+  );
+
+  const updateDraftField = useCallback(
+    <K extends SectionKey, F extends keyof WebsiteContent[K]>(
+      section: K,
+      field: F,
+      value: WebsiteContent[K][F]
+    ) => {
+      setDraftWebsiteContent((prev) => {
+        const currentSection = prev[section];
+        const updated: WebsiteContent = {
+          ...prev,
+          [section]: {
+            ...currentSection,
+            [field]: value,
+          },
+        };
+        try {
+          localStorage.setItem('faminas_draft_website_content_v1', JSON.stringify(updated));
+        } catch (err) {
+          console.error('Failed to cache draft field:', err);
+        }
+        setIsContentDirty(true);
+        return updated;
+      });
+    },
+    []
+  );
+
+  const discardDraft = useCallback(() => {
+    setDraftWebsiteContent(websiteContent);
+    try {
+      localStorage.setItem('faminas_draft_website_content_v1', JSON.stringify(websiteContent));
+    } catch {}
+    setIsContentDirty(false);
+    notify('success', 'Draft changes discarded. Reverted to live published website.');
+  }, [websiteContent, notify]);
+
+  const publishWebsiteContent = useCallback(async () => {
+    try {
+      const toPublish: WebsiteContent = {
+        ...draftWebsiteContent,
+        lastPublishedAt: new Date().toISOString(),
+        publishedBy: user?.displayName || user?.email || 'Administrator',
+      };
+
+      // 1. Immediately store in localStorage so live changes persist across refresh and redeploy
+      localStorage.setItem('faminas_published_website_content_v1', JSON.stringify(toPublish));
+      localStorage.setItem('faminas_draft_website_content_v1', JSON.stringify(toPublish));
+
+      // 2. Persist to Firestore document `restaurant_settings/website_content`
+      try {
+        const contentDocRef = doc(db, 'restaurant_settings', 'website_content');
+        await setDoc(contentDocRef, {
+          ...toPublish,
+          updatedAt: serverTimestamp(),
+        });
+      } catch (firestoreErr) {
+        console.warn('Firestore sync note (content saved to local cache):', firestoreErr);
+      }
+
+      setWebsiteContent(toPublish);
+      setDraftWebsiteContent(toPublish);
+      setIsContentDirty(false);
+      notify('success', '🎉 Website content published! Live frontend updated instantly.');
+    } catch (err) {
+      console.error('Failed to publish website content:', err);
+      notify('error', 'Failed to publish content. Please check connection and try again.');
+      throw err;
+    }
+  }, [draftWebsiteContent, user, notify]);
+
+  const resetWebsiteContentToDefault = useCallback(async () => {
+    try {
+      setDraftWebsiteContent(INITIAL_WEBSITE_CONTENT);
+      setWebsiteContent(INITIAL_WEBSITE_CONTENT);
+      localStorage.setItem('faminas_published_website_content_v1', JSON.stringify(INITIAL_WEBSITE_CONTENT));
+      localStorage.setItem('faminas_draft_website_content_v1', JSON.stringify(INITIAL_WEBSITE_CONTENT));
+      try {
+        const contentDocRef = doc(db, 'restaurant_settings', 'website_content');
+        await setDoc(contentDocRef, {
+          ...INITIAL_WEBSITE_CONTENT,
+          updatedAt: serverTimestamp(),
+        });
+      } catch (e) {}
+      setIsContentDirty(false);
+      notify('success', 'Website content reset to factory defaults.');
+    } catch (err) {
+      notify('error', 'Could not reset website content.');
+    }
+  }, [notify]);
+
+  const uploadMedia = useCallback(async (file: File, folder: string = 'cms_media'): Promise<string> => {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = async () => {
+        const base64Data = reader.result as string;
+        try {
+          const response = await fetch('/api/upload.php', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'x-admin-auth': 'true',
+            },
+            body: JSON.stringify({
+              base64Data,
+              filename: file.name,
+              folder,
+              adminToken: 'faminas-authorized-admin-session',
+            }),
+          });
+
+          if (response.ok) {
+            const resData = await response.json();
+            if (resData.url) {
+              resolve(resData.url);
+              return;
+            }
+          }
+          // Fallback to base64 data URL
+          resolve(base64Data);
+        } catch (err) {
+          console.warn('Upload API request error, fallback to base64 data URL:', err);
+          resolve(base64Data);
+        }
+      };
+      reader.onerror = (err) => reject(err);
+      reader.readAsDataURL(file);
+    });
+  }, []);
+
   return (
     <RestaurantContext.Provider
       value={{
@@ -2342,6 +2612,15 @@ export const RestaurantProvider: React.FC<{ children: React.ReactNode }> = ({ ch
         resetHeroSlides,
         newsletterSubscribers,
         subscribeNewsletter,
+        websiteContent,
+        draftWebsiteContent,
+        isContentDirty,
+        updateDraftSection,
+        updateDraftField,
+        publishWebsiteContent,
+        discardDraft,
+        resetWebsiteContentToDefault,
+        uploadMedia,
       }}
     >
       {children}

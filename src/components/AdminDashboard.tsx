@@ -32,7 +32,9 @@ import {
   XCircle,
   CheckCircle2,
   Clock,
+  Layout,
 } from 'lucide-react';
+import { WebsiteContentEditor } from './WebsiteContentEditor';
 import { useRestaurant } from '../context/RestaurantContext';
 import { getCulinaryVisualUrl } from '../lib/culinaryVisuals';
 import {
@@ -63,7 +65,9 @@ const ORDER_STATUSES: OrderStatus[] = [
   'Cancelled',
 ];
 
-export const AdminDashboard: React.FC = () => {
+export const AdminDashboard: React.FC<{ onPreviewWebsite?: () => void }> = ({
+  onPreviewWebsite,
+}) => {
   const {
     user,
     isAdmin,
@@ -116,11 +120,13 @@ export const AdminDashboard: React.FC = () => {
     updateHeroSlide,
     resetHeroSlides,
     newsletterSubscribers,
+    isContentDirty,
     notify,
   } = useRestaurant();
 
   const [activeTab, setActiveTab] = useState<
     | 'overview'
+    | 'website-cms'
     | 'orders'
     | 'notifications'
     | 'daily-specials'
@@ -916,6 +922,13 @@ export const AdminDashboard: React.FC = () => {
             icon: ShoppingBag,
             alertCount: alertedInventoryItems.length,
             badgeStyle: 'warning',
+          },
+          {
+            id: 'website-cms',
+            label: 'Website CMS & Live Content',
+            icon: Layout,
+            alertCount: isContentDirty ? 1 : 0,
+            badgeStyle: 'red',
           },
           {
             id: 'orders',
@@ -3769,6 +3782,11 @@ export const AdminDashboard: React.FC = () => {
             ))}
           </div>
         </div>
+      )}
+
+      {/* TAB: WEBSITE CMS CONTENT MANAGEMENT */}
+      {activeTab === 'website-cms' && (
+        <WebsiteContentEditor onPreviewWebsite={onPreviewWebsite} />
       )}
 
       {/* TAB 6: RESTAURANT SETTINGS & DELIVERY ZONES */}
